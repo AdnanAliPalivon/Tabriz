@@ -1,0 +1,1439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4C89BA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D3047" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Tabriz — an open-data feasibility study of glacier-fed irrigation, micro-hydropower and settlement in Shimshal, Gilgit-Baltistan.">
+<meta property="og:title" content="Tabriz">
+<meta property="og:image" content="images/photo_valley.jpg">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127956;</text></svg>">
+<style>*{margin:0;padding:0}</style>
+<title>Tabriz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500&family=Noto+Nastaliq+Urdu:wght@400;600;700&display=swap">
+<style>
+:root{
+  --shell:#EFEBE4; --bg:#FBFAF8; --card:#FFFFFF; --card2:#F4F2EE; --line:#E3DFD7; --line2:#CFC9BE;
+  --ink:#15191C; --ink2:#4B565D; --head:#0E3A52; --muted:#5F6E77;
+  --blue:#1D5A80; --blue2:#DCE9EF; --mustard:#B8912E; --mustard2:#F3EAD4;
+  --alert:#A2432E; --alert2:#F5E2DC; --good:#3B6B4A;
+  --contour:rgba(29,90,128,.20);
+  --sh:0 1px 2px rgba(21,25,28,.04),0 10px 34px rgba(21,25,28,.07);
+  --sh2:0 30px 90px rgba(21,25,28,.18);
+  --rad:26px; --radc:18px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --shell:#0D3047; --bg:transparent; --onink:#0D1A22;
+  --card:rgba(14,26,34,.87); --card2:rgba(20,34,43,.80);
+  --line:rgba(150,200,225,.16); --line2:rgba(150,200,225,.30);
+  --ink:#EEF4F6; --ink2:#AEBFC8; --head:#F0A05A; --muted:#93A6B0;
+  --blue:#63BEE0; --blue2:#0F3346; --mustard:#E3B45C; --mustard2:#2E2513;
+  --alert:#E5806A; --alert2:#3A1D16; --good:#71C08F;
+  --contour:rgba(160,215,240,.30); --grid:rgba(160,215,240,.07);
+  --sh:0 1px 2px rgba(0,0,0,.4),0 12px 36px rgba(0,0,0,.45);
+  --sh2:0 30px 90px rgba(0,0,0,.65);
+}}
+:root[data-theme="dark"]{
+  --shell:#0D3047; --bg:transparent; --onink:#0D1A22;
+  --card:rgba(14,26,34,.87); --card2:rgba(20,34,43,.80);
+  --line:rgba(150,200,225,.16); --line2:rgba(150,200,225,.30);
+  --ink:#EEF4F6; --ink2:#AEBFC8; --head:#F0A05A; --muted:#93A6B0;
+  --blue:#63BEE0; --blue2:#0F3346; --mustard:#E3B45C; --mustard2:#2E2513;
+  --alert:#E5806A; --alert2:#3A1D16; --good:#71C08F;
+  --contour:rgba(160,215,240,.30); --grid:rgba(160,215,240,.07);
+  --sh:0 1px 2px rgba(0,0,0,.4),0 12px 36px rgba(0,0,0,.45);
+  --sh2:0 30px 90px rgba(0,0,0,.65);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--shell);color:var(--ink);
+  font-family:Outfit,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16.5px;line-height:1.6;font-weight:350;-webkit-font-smoothing:antialiased}
+.shell{padding:clamp(10px,1.5vw,22px)}
+.page{background:transparent;border-radius:var(--rad);position:relative}
+.wrap{max-width:82rem;margin:0 auto;padding:0 clamp(1.1rem,4.2vw,3.4rem)}
+h1,h2,h3{margin:0;font-weight:300;letter-spacing:-.028em;line-height:1.06;text-wrap:balance;color:var(--ink)}
+h2{font-size:clamp(1.7rem,3.5vw,2.85rem)}
+h3{font-size:1.3rem;font-weight:500;letter-spacing:-.018em;line-height:1.25;color:var(--head)}
+h2{color:var(--head)}
+h3:not(.card h3){padding-bottom:.55rem;border-bottom:2px solid var(--head);display:inline-block}
+.card h3{color:var(--head);font-size:1.14rem;font-weight:500}
+p{margin:0 0 1.05em;color:var(--ink2)}
+.body p,.shead .right p{color:var(--ink2)}
+a{color:var(--blue)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+.lbl{font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted)}
+
+/* ---------- contour canvas ---------- */
+#contours{position:fixed;top:0;left:0;z-index:0;pointer-events:none;
+  transform:translateZ(0);will-change:transform;contain:strict}
+.page>*{position:relative;z-index:1}
+
+/* ---------- masthead ---------- */
+.mast{position:sticky;top:0;z-index:90;background:color-mix(in srgb,var(--shell) 78%,transparent);
+  backdrop-filter:blur(20px) saturate(1.4);border-bottom:1px solid var(--line)}
+.mrow{display:flex;align-items:center;gap:1rem;height:66px}
+.wm{font-family:"Instrument Serif",Georgia,serif;font-size:1.6rem;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:.55rem}
+.wm .d{width:7px;height:7px;border-radius:50%;background:var(--mustard)}
+.wm small{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.16em;
+  color:var(--muted);text-transform:uppercase;align-self:center}
+.msp{flex:1}
+.pillset{display:flex;align-items:center;gap:.3rem;background:var(--card2);
+  border:1px solid var(--line);border-radius:999px;padding:3px}
+.pillset button{border:0;background:transparent;cursor:pointer;border-radius:999px;
+  padding:.44rem .95rem;font-family:Outfit,sans-serif;font-size:.8rem;font-weight:450;
+  color:var(--muted);transition:all .25s cubic-bezier(.2,.7,.3,1);white-space:nowrap}
+.pillset button[aria-pressed="true"]{background:var(--ink);color:var(--onink)}
+.pillset button:hover:not([aria-pressed="true"]){color:var(--ink)}
+.pillset button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.pillset.urdu button{font-family:"Noto Nastaliq Urdu",serif;font-size:1rem;padding:.15rem 1rem .42rem;line-height:1.7}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:clamp(30rem,84vh,46rem);display:flex;align-items:center;
+  justify-content:center;text-align:center;overflow:hidden;border-radius:var(--radc);
+  margin:clamp(.6rem,1.4vw,1.1rem);isolation:isolate}
+.hero img.bgi{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;
+  transform:scale(1.06);animation:kb 26s ease-out forwards}
+@keyframes kb{to{transform:scale(1)}}
+.hero:before{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(180deg,rgba(8,16,22,.52) 0%,rgba(8,16,22,.22) 38%,rgba(8,16,22,.62) 100%)}
+.hero .inner{padding:4rem 1.2rem;max-width:52rem}
+.hero .kicker{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.28em;
+  text-transform:uppercase;color:rgba(255,255,255,.82);margin-bottom:1.6rem;
+  opacity:0;animation:fadeUp .9s .15s cubic-bezier(.2,.7,.3,1) forwards}
+h1.big{font-size:clamp(4.6rem,19vw,15rem);font-weight:200;letter-spacing:-.055em;
+  color:#fff;line-height:.86;display:flex;justify-content:center;flex-wrap:wrap}
+h1.big span{display:inline-block;opacity:0;filter:blur(14px);transform:translateY(.34em) scale(.94);
+  animation:letter 1.15s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes letter{to{opacity:1;filter:blur(0);transform:none}}
+h1.big span:nth-child(1){animation-delay:.10s}h1.big span:nth-child(2){animation-delay:.19s}
+h1.big span:nth-child(3){animation-delay:.28s}h1.big span:nth-child(4){animation-delay:.37s}
+h1.big span:nth-child(5){animation-delay:.46s}h1.big span:nth-child(6){animation-delay:.55s}
+h1.ur-big{font-family:"Noto Nastaliq Urdu",serif;font-size:clamp(4.2rem,15vw,11rem);color:#fff;
+  font-weight:600;line-height:1.55;padding-bottom:.14em;opacity:0;animation:fadeUp 1.1s .2s cubic-bezier(.2,.7,.3,1) forwards}
+.rule{height:1px;background:rgba(255,255,255,.4);margin:2.2rem auto 0;width:0;
+  animation:grow 1.3s .72s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes grow{to{width:min(22rem,60%)}}
+.hero .sub{color:rgba(255,255,255,.9);font-size:clamp(1.02rem,1.7vw,1.28rem);font-weight:300;
+  margin:1.8rem auto 0;max-width:34rem;opacity:0;animation:fadeUp 1s .92s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.cta{display:inline-flex;align-items:center;gap:.7rem;background:#fff;color:#15191C;
+  border:0;border-radius:999px;padding:.44rem 1.5rem .44rem .44rem;margin-top:2.2rem;cursor:pointer;
+  font-family:Outfit,sans-serif;font-size:.95rem;font-weight:450;text-decoration:none;
+  opacity:0;animation:fadeUp 1s 1.08s cubic-bezier(.2,.7,.3,1) forwards;
+  transition:transform .28s cubic-bezier(.2,.7,.3,1),box-shadow .28s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(0,0,0,.28)}
+.cta .ic{width:34px;height:34px;border-radius:50%;background:var(--mustard);display:grid;
+  place-items:center;font-size:.95rem;color:#15191C;transition:transform .35s cubic-bezier(.2,.7,.3,1)}
+.cta:hover .ic{transform:rotate(45deg)}
+.cta:focus-visible{outline:2px solid #fff;outline-offset:3px}
+.scroll-cue{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);
+  font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.2em;
+  color:rgba(255,255,255,.6);text-transform:uppercase;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
+
+/* ---------- section card ---------- */
+.sec{background:var(--card);border-radius:var(--radc);margin:clamp(.7rem,1.7vw,1.4rem);
+  padding:clamp(2.4rem,5vw,4.4rem) 0;box-shadow:var(--sh);
+  backdrop-filter:blur(3px) saturate(1.1);border:1px solid var(--line)}
+.sec.plain{background:transparent;box-shadow:none}
+.shead{display:grid;grid-template-columns:minmax(8rem,15rem) 1fr;gap:clamp(1.4rem,4vw,3.6rem);
+  align-items:start;margin-bottom:2.8rem}
+.shead .left .lbl{display:block}
+.shead .left .ct{font-family:"IBM Plex Mono",monospace;font-size:.68rem;color:var(--line2);
+  margin-top:.35rem;letter-spacing:.08em}
+.shead .right p{font-size:clamp(1.02rem,1.6vw,1.2rem);color:var(--ink2);margin-top:1.15rem;max-width:44rem}
+@media(max-width:760px){.shead{grid-template-columns:1fr;gap:1rem}}
+.body{max-width:42rem}.body.w{max-width:54rem}
+
+/* ---------- big stats ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(11rem,1fr));
+  gap:clamp(1.4rem,3vw,2.6rem);margin-top:1rem}
+.stat .n{font-size:clamp(2.9rem,6vw,4.6rem);font-weight:200;letter-spacing:-.05em;line-height:.92;
+  font-variant-numeric:tabular-nums}
+.stat .n .u{font-size:.38em;font-weight:300;color:var(--muted);margin-left:.25rem;letter-spacing:-.01em}
+.stat .t{font-size:1rem;font-weight:450;margin-top:.85rem}
+.stat .d{font-size:.86rem;color:var(--muted);margin-top:.3rem;line-height:1.45}
+
+/* ---------- tabs ---------- */
+.tabwrap{position:sticky;top:66px;z-index:80;background:var(--card);
+  backdrop-filter:blur(14px) saturate(1.1);border:1px solid var(--line);
+  border-radius:999px;margin:clamp(.7rem,1.7vw,1.4rem);box-shadow:var(--sh)}
+.tabwrap .wrap{padding:0 clamp(.5rem,1.4vw,.9rem)}
+.tabrow{display:flex;align-items:center;gap:.7rem;padding:.5rem 0}
+.tabrow .hint{flex:0 0 auto;font-family:"IBM Plex Mono",monospace;font-size:.6rem;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--head);padding-left:.6rem;
+  display:flex;align-items:center;gap:.45rem}
+.tabrow .hint:after{content:"";width:1px;height:16px;background:var(--line2)}
+.tabs{display:flex;gap:.3rem;overflow-x:auto;scrollbar-width:none;padding:.15rem 0;flex:1}
+@media(max-width:860px){.tabrow .hint{display:none}}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:1px solid var(--line);background:var(--card2);cursor:pointer;
+  border-radius:999px;padding:.52rem 1.05rem;font-family:Outfit,sans-serif;font-size:.9rem;
+  font-weight:450;color:var(--ink2);transition:all .28s cubic-bezier(.2,.7,.3,1);
+  display:flex;align-items:center;gap:.5rem;white-space:nowrap}
+.tab i{font-style:normal;font-family:"IBM Plex Mono",monospace;font-size:.6rem;
+  color:var(--muted);transition:color .28s}
+.tab:hover{color:var(--ink);border-color:var(--head);transform:translateY(-1px)}
+.tab[aria-current="true"]{background:var(--head);border-color:var(--head);color:#fff;
+  font-weight:500;box-shadow:0 3px 12px color-mix(in srgb,var(--head) 45%,transparent)}
+.tab[aria-current="true"] i{color:rgba(255,255,255,.75)}
+.tab:focus-visible{outline:2px solid var(--head);outline-offset:2px}
+
+/* ---------- bottom topic bar ---------- */
+.pager{margin:clamp(.7rem,1.7vw,1.4rem);background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radc);padding:1.5rem clamp(1rem,3vw,2rem);backdrop-filter:blur(3px);
+  box-shadow:var(--sh)}
+.pager .ph{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--head);margin-bottom:1rem}
+.pager .tabs{flex-wrap:wrap;overflow:visible;gap:.4rem}
+.pgnav{display:flex;justify-content:space-between;gap:1rem;margin-top:1.4rem;
+  padding-top:1.2rem;border-top:1px solid var(--line);flex-wrap:wrap}
+.pgbtn{display:inline-flex;align-items:center;gap:.65rem;background:var(--card2);
+  border:1px solid var(--line);border-radius:999px;padding:.5rem 1.25rem;cursor:pointer;
+  font-family:Outfit,sans-serif;font-size:.9rem;color:var(--ink);
+  transition:all .28s cubic-bezier(.2,.7,.3,1);max-width:100%}
+.pgbtn:hover{border-color:var(--head);transform:translateY(-2px);box-shadow:var(--sh)}
+.pgbtn:disabled{opacity:.32;cursor:default;transform:none;box-shadow:none}
+.pgbtn .ar{color:var(--head);font-size:1.05rem;line-height:1}
+.pgbtn small{display:block;font-family:"IBM Plex Mono",monospace;font-size:.56rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:.15rem}
+.pgbtn span.t{display:block;text-align:left}
+.pgbtn.next span.t{text-align:right}
+.pgbtn:focus-visible{outline:2px solid var(--head);outline-offset:2px}
+[data-lang="ur"] .pgbtn span.t{text-align:right}
+[data-lang="ur"] .pgbtn .ur{font-family:"Noto Nastaliq Urdu",serif;font-size:.98rem;line-height:2}
+
+.panel{display:none;animation:pin .55s cubic-bezier(.2,.7,.3,1);scroll-margin-top:130px}
+.panel.on{display:block}
+@keyframes pin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* reveal */
+.rv{transition:opacity .8s cubic-bezier(.2,.7,.3,1),transform .8s cubic-bezier(.2,.7,.3,1)}
+.js-anim .rv{opacity:0;transform:translateY(20px)}
+.js-anim .rv.in{opacity:1;transform:none}
+
+/* ---------- cards ---------- */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1rem;margin-top:2rem}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(13.5rem,1fr));gap:1rem;margin-top:2rem}
+.card{background:var(--card2);border:1px solid var(--line);border-radius:var(--radc);
+  padding:1.5rem 1.6rem 1.7rem;transition:transform .35s cubic-bezier(.2,.7,.3,1),box-shadow .35s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--sh)}
+.card .tag{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--head);display:block;margin-bottom:.85rem}
+.card.warn .tag{color:var(--alert)}
+.card p{font-size:.92rem;color:var(--ink2);margin:.55rem 0 0}
+.card h3{font-size:1.08rem}
+
+/* ---------- accordion (Bloom device) ---------- */
+.acc{margin-top:2rem;border-top:1px solid var(--line)}
+.acc details{border-bottom:1px solid var(--line)}
+.acc summary{list-style:none;cursor:pointer;padding:1.15rem .2rem;display:flex;
+  align-items:center;justify-content:space-between;gap:1rem;font-size:1.06rem;font-weight:400;
+  transition:color .25s}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary:hover{color:var(--blue)}
+.acc summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:4px}
+.acc .ic{width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);display:grid;
+  place-items:center;flex:0 0 auto;font-size:.8rem;color:var(--muted);
+  transition:transform .35s cubic-bezier(.2,.7,.3,1),background .3s,color .3s,border-color .3s}
+.acc details[open] .ic{transform:rotate(45deg);background:var(--blue);border-color:var(--blue);color:#fff}
+.acc .content{padding:0 .2rem 1.4rem;color:var(--ink2);font-size:.95rem;max-width:44rem}
+
+/* ---------- widgets ---------- */
+.widget{background:var(--card2);backdrop-filter:blur(2px);border:1px solid var(--line);border-radius:var(--radc);
+  padding:1.7rem 1.8rem 1.9rem;margin-top:2.2rem}
+.wtitle{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
+  flex-wrap:wrap;margin-bottom:1.5rem}
+.wtitle h3{font-size:1.1rem}
+.ctrl{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.ctrl>.lbl{min-width:5rem}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:11rem;height:4px;
+  background:var(--line2);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;
+  border-radius:50%;background:var(--blue);cursor:grab;border:3px solid var(--card2);
+  box-shadow:0 2px 8px rgba(0,0,0,.18);transition:transform .18s}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.15);cursor:grabbing}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--blue);
+  border:3px solid var(--card2);cursor:grab}
+input[type=range]:focus-visible{box-shadow:0 0 0 3px var(--blue2)}
+.chips{display:flex;gap:.4rem;flex-wrap:wrap}
+.chip{font-family:Outfit,sans-serif;font-size:.83rem;padding:.42rem .95rem;border:1px solid var(--line2);
+  background:var(--card);color:var(--muted);border-radius:999px;cursor:pointer;transition:all .25s}
+.chip[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.readout{display:flex;align-items:flex-end;gap:.55rem;margin:1.7rem 0 .3rem}
+.readout .big{font-size:clamp(3rem,8vw,5rem);font-weight:200;letter-spacing:-.055em;line-height:.86;
+  font-variant-numeric:tabular-nums;color:var(--blue)}
+.readout .un{font-size:.95rem;color:var(--muted);padding-bottom:.55rem}
+.meter{height:10px;background:var(--card);border:1px solid var(--line);border-radius:999px;
+  overflow:hidden;position:relative;margin-top:1.2rem}
+.meter .fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--good));width:0;
+  border-radius:999px;transition:width .5s cubic-bezier(.2,.7,.3,1)}
+.meter .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink);opacity:.35}
+.mlabels{display:flex;justify-content:space-between;gap:.6rem;margin-top:.6rem}
+.mlabels span{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted)}
+.verdictline{margin-top:1.3rem;font-size:.95rem;color:var(--ink2);min-height:2.8em}
+.verdictline b{color:var(--ink);font-weight:500}
+.verdictline.bad b{color:var(--alert)}.verdictline.ok b{color:var(--good)}
+
+/* ---------- funnel ---------- */
+.funnel{display:flex;flex-direction:column;gap:6px;margin-top:2.2rem}
+.fr{position:relative;background:var(--card2);border:1px solid var(--line);border-radius:12px;
+  padding:.95rem 1.2rem;display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;
+  overflow:hidden}
+.fr .bar{position:absolute;inset:0 auto 0 0;background:var(--blue2);width:var(--w);
+  transition:width 1.2s cubic-bezier(.2,.7,.3,1)}
+.js-anim .fr .bar{width:0}.js-anim .fr.in .bar{width:var(--w)}
+.fr .lbl2,.fr .val{position:relative;z-index:1;font-size:.96rem}
+.fr .val{font-family:"IBM Plex Mono",monospace;font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fr.last{background:var(--ink);border-color:var(--ink)}
+.fr.last .lbl2,.fr.last .val{color:var(--onink);font-weight:500}
+.fr.last .bar{background:transparent}
+
+/* ---------- figures ---------- */
+figure{margin:2.4rem 0 0}
+.fw{border-radius:var(--radc);overflow:hidden;background:var(--card2);border:1px solid var(--line);
+  cursor:zoom-in;position:relative;transition:box-shadow .35s,transform .35s cubic-bezier(.2,.7,.3,1)}
+.fw:hover{box-shadow:var(--sh2);transform:translateY(-3px)}
+.fw:after{content:"Enlarge";position:absolute;right:.9rem;bottom:.9rem;font-family:Outfit,sans-serif;
+  font-size:.75rem;color:#15191C;background:rgba(255,255,255,.94);padding:.35rem .85rem;
+  border-radius:999px;opacity:0;transition:opacity .28s}
+.fw:hover:after{opacity:1}
+.fw img{width:100%;height:auto;display:block}
+figcaption{font-size:.88rem;color:var(--muted);margin-top:.85rem;max-width:46rem;line-height:1.5}
+figcaption b{color:var(--ink2);font-weight:500}
+#lb{position:fixed;inset:0;z-index:300;background:color-mix(in srgb,var(--shell) 94%,transparent);
+  backdrop-filter:blur(26px);display:none;align-items:center;justify-content:center;
+  padding:clamp(1rem,3vw,3rem);cursor:zoom-out}
+#lb.on{display:flex;animation:fadeUp .32s}
+#lb img{max-width:100%;max-height:100%;object-fit:contain;border-radius:var(--radc);box-shadow:var(--sh2)}
+#lb .x{position:absolute;top:1.4rem;right:1.6rem;font-family:Outfit,sans-serif;font-size:.85rem;
+  background:var(--card);border:1px solid var(--line);padding:.5rem 1.1rem;border-radius:999px;
+  cursor:pointer;color:var(--ink)}
+
+/* ---------- photo band ---------- */
+.band{position:relative;border-radius:var(--radc);overflow:hidden;
+  margin:clamp(.6rem,1.4vw,1.1rem);min-height:clamp(20rem,52vh,30rem);
+  display:flex;align-items:center;justify-content:center;text-align:center}
+.band img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.band:before{content:"";position:absolute;inset:0;z-index:1;background:rgba(8,16,22,.46)}
+.band .bi{position:relative;z-index:2;padding:3.5rem 1.4rem;max-width:44rem;color:#fff}
+.band h2{color:#fff;font-weight:200}
+.band p{color:rgba(255,255,255,.88);margin-top:1.2rem;font-weight:300}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;margin:2rem 0 0;border:1px solid var(--line);border-radius:var(--radc);background:var(--card2)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:30rem}
+th,td{text-align:left;padding:.75rem 1rem;border-bottom:1px solid var(--line)}
+th{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);font-weight:400}
+td.n,th.n{text-align:right;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-size:.86rem}
+tbody tr{transition:background .2s}tbody tr:hover{background:var(--card)}
+tbody tr:last-child td{border-bottom:0}
+tr.hi td{background:var(--blue2)}tr.bad td{background:var(--alert2)}
+
+.note{border:1px solid var(--line);border-left:3px solid var(--line2);border-radius:12px;
+  padding:1.2rem 1.4rem;margin:2rem 0;color:var(--ink2);max-width:48rem;background:var(--card2)}
+.note.warn{border-left-color:var(--alert)}.note.warn .k{color:var(--alert)}
+.note.ok{border-left-color:var(--good)}.note.ok .k{color:var(--good)}
+.note .k{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--muted);display:block;margin-bottom:.6rem}
+.note p:last-child{margin-bottom:0}
+.tier{display:inline-flex;font-family:"IBM Plex Mono",monospace;font-size:.58rem;letter-spacing:.12em;
+  text-transform:uppercase;padding:.18rem .55rem;border:1px solid var(--line2);border-radius:999px;color:var(--muted)}
+.tier.t1{border-color:var(--mustard);color:var(--mustard)}
+.tier.t2{border-color:var(--blue);color:var(--blue)}
+ul.tick{list-style:none;padding:0;margin:1.4rem 0 0;max-width:48rem}
+ul.tick li{padding:.7rem 0 .7rem 1.7rem;border-bottom:1px solid var(--line);position:relative;font-size:.94rem}
+ul.tick li:before{content:"";position:absolute;left:.15rem;top:1.25rem;width:6px;height:6px;
+  border-radius:50%;background:var(--mustard)}
+dl.gl dt{font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--head);padding-top:1.1rem;border-top:1px solid var(--line);margin-top:1.1rem}
+dl.gl dd{margin:.4rem 0 0;color:var(--ink2);font-size:.94rem;max-width:44rem}
+
+footer{padding:clamp(2.6rem,5vw,4rem) 0;color:var(--ink2);font-size:.9rem;
+  background:var(--card);border-radius:var(--radc);margin:clamp(.6rem,1.4vw,1.1rem);
+  backdrop-filter:blur(3px);border:1px solid var(--line)}
+footer p{max-width:48rem}
+
+/* ---------- language ---------- */
+[data-lang="en"] .ur{display:none !important}
+[data-lang="ur"] .en{display:none !important}
+[data-lang="ur"] .shead,[data-lang="ur"] .body,[data-lang="ur"] .card,[data-lang="ur"] .note,
+[data-lang="ur"] figcaption,[data-lang="ur"] .fr .lbl2,[data-lang="ur"] .stat,
+[data-lang="ur"] footer,[data-lang="ur"] .verdictline,[data-lang="ur"] .acc .content,
+[data-lang="ur"] .acc summary,[data-lang="ur"] .band .bi{direction:rtl;text-align:right}
+[data-lang="ur"] .ur{font-family:"Noto Nastaliq Urdu",serif;line-height:2.5;font-size:1.06em}
+[data-lang="ur"] h2 .ur{display:block;font-weight:700;line-height:1.75;letter-spacing:0;font-size:1.15em}
+[data-lang="ur"] h3 .ur{display:block;font-weight:700;line-height:1.8;letter-spacing:0;font-size:1.1em}
+[data-lang="ur"] .tab .ur{font-family:"Noto Nastaliq Urdu",serif;font-size:1.02rem;line-height:2.1;padding-bottom:.1rem}
+[data-lang="ur"] .stat .t .ur{font-family:"Noto Nastaliq Urdu",serif;line-height:2;font-size:1.06rem}
+[data-lang="ur"] .stat .d .ur{font-family:"Noto Nastaliq Urdu",serif;line-height:2.1;font-size:.96rem}
+[data-lang="ur"] .card .tag .ur,[data-lang="ur"] .lbl .ur{font-family:"Noto Nastaliq Urdu",serif;
+  font-size:.92rem;letter-spacing:0;text-transform:none;line-height:2}
+[data-lang="ur"] .hero .kicker .ur{font-family:"Noto Nastaliq Urdu",serif;font-size:.95rem;
+  letter-spacing:.04em;line-height:2}
+[data-lang="ur"] .hero .sub{font-family:"Noto Nastaliq Urdu",serif;line-height:2.3;
+  font-size:clamp(1rem,1.7vw,1.24rem)}
+[data-lang="ur"] .cta .ur{font-family:"Noto Nastaliq Urdu",serif;font-size:1rem;line-height:2}
+[data-lang="ur"] #seaname,[data-lang="ur"] #stagelbl{font-family:"Noto Nastaliq Urdu",serif;
+  font-size:1.12rem;letter-spacing:0;text-transform:none;line-height:2.1}
+/* SPECIFICITY GUARD — [data-lang="ur"] .ur (0,2,0) otherwise beats element rules like
+   h1.ur-big (0,1,1) and silently shrinks them. Anything that sets its own Urdu size
+   must be re-stated here at (0,2,1) or higher. */
+[data-lang="ur"] h1.ur-big{font-size:clamp(4.2rem,15vw,11rem);line-height:1.55;font-weight:600}
+[data-lang="ur"] .readout .un .ur{font-size:1rem;line-height:1.9}
+[data-lang="ur"] .wtitle .lbl.ur{font-size:.95rem}
+[data-lang="ur"] .enonly{font-size:.6rem}
+[data-lang="ur"] .card .tag.ur{font-size:.92rem}
+[data-lang="ur"] .acc summary{font-family:"Noto Nastaliq Urdu",serif;line-height:2.1;font-size:1.02rem}
+[data-lang="ur"] .verdictline{font-family:"Noto Nastaliq Urdu",serif;line-height:2.2;font-size:1rem}
+[data-lang="ur"] figcaption .ur{font-family:"Noto Nastaliq Urdu",serif;line-height:2.2;font-size:.95rem}
+[data-lang="ur"] .note .ur,[data-lang="ur"] .note .k.ur{font-family:"Noto Nastaliq Urdu",serif;line-height:2.3}
+[data-lang="ur"] .tw,[data-lang="ur"] .mono,[data-lang="ur"] dl.gl,[data-lang="ur"] ul.tick,
+[data-lang="ur"] .widget .ctrl,[data-lang="ur"] .meter,[data-lang="ur"] .mlabels{direction:ltr;text-align:left}
+.enonly{font-family:"IBM Plex Mono",monospace;font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--muted);border:1px dashed var(--line2);border-radius:999px;padding:.32rem .8rem;
+  display:inline-block;margin-bottom:1.1rem;direction:ltr}
+
+[data-mode="general"] .tech{display:none !important}
+[data-mode="technical"] .gen{display:none !important}
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important;animation-duration:.01ms !important;animation-iteration-count:1 !important}
+  .js-anim .rv{opacity:1;transform:none}
+  h1.big span{opacity:1;filter:none;transform:none}
+  html{scroll-behavior:auto}
+}
+
+
+/* ================================================================
+   MOBILE
+   Three things matter here: give the content its width back (the
+   shell + card margin + wrap padding were stacking to ~75 px of a
+   390 px screen), make every control thumb-sized, and stop the
+   masthead and tab bar fighting each other for the sticky top.
+   ================================================================ */
+@media (max-width:820px){
+  body{font-size:16px}
+  .shell{padding:5px}
+  .sec,.band,.pager,.hero,footer{margin:6px}
+  .wrap{padding:0 14px}
+  .tabwrap{margin:6px;border-radius:16px}
+  .tabwrap .wrap{padding:0 6px}
+  /* masthead scrolls away; the tab bar is what needs to stay */
+  .mast{position:static}
+  .mrow{height:auto;padding:.6rem 0;flex-wrap:wrap;gap:.5rem}
+  .wm{font-size:1.35rem;flex:1 1 100%}
+  .wm small{display:none}
+  .pillset{flex:1 1 auto}
+  .pillset button{flex:1;text-align:center;padding:.55rem .7rem;font-size:.82rem}
+  .tabwrap{position:sticky;top:6px}
+  .panel .sec{scroll-margin-top:86px}
+  .tabrow{padding:.4rem 0}
+  .tab{padding:.6rem 1rem;font-size:.88rem}
+  /* hero */
+  .hero{min-height:78vh;min-height:78dvh}
+  .hero .inner{padding:2.5rem .9rem}
+  .hero .kicker{font-size:.58rem;letter-spacing:.16em}
+  h1.big{font-size:clamp(3.4rem,22vw,7rem)}
+  .hero .sub{font-size:1.02rem;margin-top:1.4rem}
+  .rule{margin-top:1.6rem}
+  .cta{padding:.4rem 1.3rem .4rem .4rem;font-size:.92rem;min-height:48px}
+  .cta .ic{width:38px;height:38px}
+  /* section heads stack */
+  .shead{grid-template-columns:1fr;gap:.9rem;margin-bottom:2rem}
+  .shead .left{display:flex;align-items:baseline;gap:.7rem}
+  .shead .left .ct{margin-top:0}
+  h2{font-size:clamp(1.6rem,7vw,2.1rem)}
+  h3{font-size:1.14rem}
+  /* two-up numbers instead of one long column */
+  .stats{grid-template-columns:1fr 1fr;gap:1.4rem 1rem}
+  .stat .n{font-size:clamp(2.2rem,10vw,3rem)}
+  .stat .t{font-size:.94rem;margin-top:.6rem}
+  .stat .d{font-size:.8rem}
+  .g2,.g3{grid-template-columns:1fr;gap:.8rem}
+  .card{padding:1.2rem 1.25rem 1.3rem}
+  /* controls sized for thumbs */
+  .widget{padding:1.25rem 1.1rem 1.4rem;border-radius:16px}
+  .ctrl{gap:.7rem;margin-bottom:1.3rem}
+  .ctrl>.lbl{min-width:100%}
+  input[type=range]{height:6px;min-width:100%;flex:1 1 100%}
+  input[type=range]::-webkit-slider-thumb{width:30px;height:30px;border-width:4px}
+  input[type=range]::-moz-range-thumb{width:30px;height:30px;border-width:4px}
+  .chips{width:100%}
+  .chip{flex:1;text-align:center;min-height:44px;display:flex;align-items:center;justify-content:center}
+  .readout .big{font-size:clamp(2.6rem,13vw,3.4rem)}
+  .mlabels{flex-wrap:wrap;gap:.3rem}
+  .mlabels span{font-size:.56rem}
+  .verdictline{font-size:.9rem}
+  /* funnel rows breathe */
+  .fr{grid-template-columns:1fr;gap:.3rem;padding:.8rem .9rem}
+  .fr .val{font-size:1.05rem}
+  /* figures and tables */
+  figure{margin-top:1.8rem}
+  .fw:after{opacity:1;font-size:.68rem;right:.6rem;bottom:.6rem}
+  figcaption{font-size:.84rem}
+  .tw{border-radius:14px}
+  th,td{padding:.6rem .7rem;font-size:.82rem}
+  /* accordion + pager */
+  .acc summary{padding:1rem .1rem;font-size:1rem;min-height:52px}
+  .acc .ic{width:34px;height:34px}
+  .pager{padding:1.2rem 1rem;border-radius:16px}
+  .pgnav{gap:.6rem}
+  .pgbtn{flex:1;min-height:52px;padding:.5rem .9rem;justify-content:center}
+  .pgbtn span.t{min-width:0}
+  .pgbtn #pgPrevT,.pgbtn #pgNextT{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:9rem}
+  #lb{padding:.7rem}
+  #lb .x{top:.7rem;right:.8rem;min-height:44px}
+  .note{padding:1rem 1.1rem;border-radius:12px}
+  /* backdrop-filter is expensive on mobile GPUs: drop it, raise opacity instead */
+  .sec,.widget,.pager,footer,.mast,.tabwrap{backdrop-filter:none}
+}
+@media (max-width:820px) and (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--card:rgba(14,26,34,.93); --card2:rgba(20,34,43,.90)}
+}
+@media (max-width:820px){
+  :root{--card:rgba(255,255,255,.93); --card2:rgba(246,249,251,.90)}
+  :root[data-theme="dark"]{--card:rgba(14,26,34,.93); --card2:rgba(20,34,43,.90)}
+}
+@media (max-width:430px){
+  .wrap{padding:0 11px}
+  .stats{grid-template-columns:1fr 1fr;gap:1.1rem .8rem}
+  .pgbtn #pgPrevT,.pgbtn #pgNextT{max-width:6.5rem;font-size:.85rem}
+  h1.big{font-size:clamp(3rem,24vw,5.5rem)}
+}
+</style>
+</head>
+<body>
+<canvas id="contours" aria-hidden="true"></canvas>
+<div class="shell"><div class="page">
+
+<header class="mast"><div class="wrap mrow">
+  <div class="wm"><span class="d"></span>Tabriz <small>Shimshal · GB</small></div>
+  <div class="msp"></div>
+  <div class="pillset urdu" role="group" aria-label="Language">
+    <button id="l-en" aria-pressed="true" style="font-family:Outfit,sans-serif;font-size:.8rem">English</button>
+    <button id="l-ur" aria-pressed="false">اردو</button>
+  </div>
+  <div class="pillset" role="group" aria-label="Reading depth">
+    <button id="m-gen" aria-pressed="true"><span class="en">Overview</span><span class="ur">عام</span></button>
+    <button id="m-tech" aria-pressed="false"><span class="en">Technical</span><span class="ur">تکنیکی</span></button>
+  </div>
+</div></header>
+
+<section class="hero">
+  <img class="bgi" src="images/photo_valley.jpg" alt="The Shimshal valley: a mustard field below bare ochre mountains under cloud" decoding="async">
+  <div class="inner">
+    <div class="kicker"><span class="en">Shimshal · Gilgit-Baltistan · 3045 m</span><span class="ur">شمشال · گلگت بلتستان · 3045 میٹر</span></div>
+    <h1 class="big en" aria-label="Tabriz"><span>T</span><span>a</span><span>b</span><span>r</span><span>i</span><span>z</span></h1>
+    <h1 class="ur-big ur">تبریز</h1>
+    <div class="rule"></div>
+    <p class="sub en">A bare slope above the Shimshal River, in the Karakoram. Meltwater runs past
+      it all summer. This is a study of what it would take to bring some of it up onto the land.</p>
+    <p class="sub ur">قراقرم میں شمشال دریا کے اوپر ایک بنجر ڈھلان۔ سارا موسمِ گرما گلیشیئر کا پانی
+      اس کے نیچے سے گزرتا رہتا ہے۔ یہ مطالعہ اسی سوال پر ہے کہ اس میں سے کچھ پانی اوپر زمین تک
+      لانے کے لیے کیا کرنا پڑے گا۔</p>
+    <a class="cta" href="#p1"><span class="ic">↗</span><span class="en">Read the study</span><span class="ur">مطالعہ پڑھیے</span></a>
+  </div>
+  <div class="scroll-cue">scroll</div>
+</section>
+
+<section class="sec"><div class="wrap">
+  <div class="shead rv">
+    <div class="left"><span class="lbl en">The answer</span><span class="lbl ur">خلاصہ</span>
+      <div class="ct">(00–08)</div></div>
+    <div class="right">
+      <h2><span class="en">Water is the easy part. Ground is what runs short.</span>
+        <span class="ur">پانی آسان حصہ ہے۔ کمی زمین کی ہے۔</span></h2>
+      <p class="en">A canal 93 metres long, cut along the contour, would carry the stream onto the
+        fan. That much works. What limits Tabriz is the ground itself — three quarters of this
+        valley is too steep to farm, and much of the flat land sits low enough that a glacial flood
+        would reach it. About 30 hectares are left. Enough for perhaps 40 households — and, at that size, enough
+        electricity to run them properly, heating included.</p>
+      <p class="ur">پہاڑ کے ساتھ ساتھ کاٹی گئی 93 میٹر لمبی نہر ندی کا پانی میدان تک پہنچا سکتی ہے۔
+        یہ حصہ چل جاتا ہے۔ تبریز کو محدود کرنے والی چیز خود زمین ہے — اس وادی کا تین چوتھائی حصہ
+        کاشت کے لیے بہت ڈھلوان ہے، اور جو ہموار زمین ہے اس کا بڑا حصہ اتنا نیچے ہے کہ گلیشیائی
+        سیلاب وہاں پہنچ جائے۔ تقریباً 30 ہیکٹر باقی بچتے ہیں۔ شاید 40 گھرانوں کے لیے کافی — اور اس پیمانے پر بجلی بھی
+        اتنی کہ گرمائش سمیت سب کچھ چل جائے۔</p>
+    </div>
+  </div>
+  <div class="stats rv" id="stats">
+    <div class="stat"><div class="n" data-to="29.8" data-dec="1">0</div>
+      <div class="t"><span class="en">Hectares at Tabriz</span><span class="ur">تبریز میں ہیکٹر</span></div>
+      <div class="d"><span class="en">Usable land, in two main blocks</span><span class="ur">قابلِ استعمال زمین، دو بڑے ٹکڑوں میں</span></div></div>
+    <div class="stat"><div class="n" data-to="207" data-dec="0">0</div>
+      <div class="t"><span class="en">Metres of head</span><span class="ur">ہیڈ، میٹر</span></div>
+      <div class="d"><span class="en">Forebay to powerhouse</span><span class="ur">ذخیرے سے پاور ہاؤس تک</span></div></div>
+    <div class="stat"><div class="n" data-to="49" data-dec="0">0</div>
+      <div class="t"><span class="en">Kilowatts in winter</span><span class="ur">سردیوں میں کلوواٹ</span></div>
+      <div class="d"><span class="en">Against 16 kW of demand</span><span class="ur">16 کلوواٹ طلب کے مقابلے میں</span></div></div>
+    <div class="stat"><div class="n" data-to="40" data-dec="0">0</div>
+      <div class="t"><span class="en">Households</span><span class="ur">گھرانے</span></div>
+      <div class="d"><span class="en">Roughly 150–300 people</span><span class="ur">تقریباً 150 سے 300 افراد</span></div></div>
+  </div>
+</div></section>
+
+<nav class="tabwrap"><div class="wrap"><div class="tabrow"><span class="hint"><span class="en">Topics</span><span class="ur">موضوعات</span></span><div class="tabs" role="tablist" aria-label="Topics">
+  <button class="tab" role="tab" aria-selected="true" aria-current="true"  aria-controls="p1" id="t1" data-i="0"><i>01</i><span class="en">The site</span><span class="ur">مقام</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-current="false" aria-controls="p2" id="t2" data-i="1"><i>02</i><span class="en">The water</span><span class="ur">پانی</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-current="false" aria-controls="p3" id="t3" data-i="2"><i>03</i><span class="en">The canal</span><span class="ur">نہر</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-current="false" aria-controls="p4" id="t4" data-i="3"><i>04</i><span class="en">The land</span><span class="ur">زمین</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-current="false" aria-controls="p5" id="t5" data-i="4"><i>05</i><span class="en">The hazard</span><span class="ur">خطرات</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-current="false" aria-controls="p6" id="t6" data-i="5"><i>06</i><span class="en">The village</span><span class="ur">بستی</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-current="false" aria-controls="p7" id="t7" data-i="6"><i>07</i><span class="en">Unknowns</span><span class="ur">نامعلوم</span></button>
+  <button class="tab" role="tab" aria-selected="false" aria-current="false" aria-controls="p8" id="t8" data-i="7"><i>08</i><span class="en">Method</span><span class="ur">طریقہ کار</span></button>
+</div></div></div></nav>
+
+<main>
+<!-- 01 -->
+<div class="panel on" role="tabpanel" id="p1" aria-labelledby="t1">
+<section class="sec"><div class="wrap">
+  <div class="shead rv"><div class="left"><span class="lbl en">The site</span><span class="lbl ur">مقام</span><div class="ct">(01–08)</div></div>
+    <div class="right"><h2><span class="en">Bare ground, 520 metres from a road</span><span class="ur">بنجر زمین، سڑک سے 520 میٹر</span></h2>
+      <p class="en">Tabriz sits at 3,045 metres on a fan of loose rock where a side stream meets the
+        Shimshal River. No fields, no houses. But the Shimshal Valley Road passes 520 metres away and
+        the hamlet of Ziārat is under 2 km downstream. This is not wilderness — it is land nobody has
+        watered yet.</p>
+      <p class="ur">تبریز شمشال دریا کے کنارے 3045 میٹر بلندی پر کھلے پتھروں کے میدان پر واقع ہے،
+        جہاں ایک ذیلی ندی دریا سے ملتی ہے۔ نہ کھیت، نہ گھر۔ لیکن شمشال ویلی روڈ صرف 520 میٹر دور
+        گزرتی ہے اور زیارت گاؤں دو کلومیٹر سے بھی کم فاصلے پر ہے۔ یہ ویرانہ نہیں — یہ وہ زمین ہے
+        جسے ابھی تک کسی نے سیراب نہیں کیا۔</p></div></div>
+  <div class="body w rv"><div class="note">
+    <span class="k en">The governing constraint</span><span class="k ur">بنیادی رکاوٹ</span>
+    <p class="en">Across the surrounding 12 × 12 km, <b>76 % of the ground is steeper than 30°</b> and
+      only 3.2 % is gentler than 5°. Relief runs from 2,749 m on the valley floor to 6,141 m on the
+      ridges. Everything that follows is shaped by this.</p>
+    <p class="ur">آس پاس کے 12 × 12 کلومیٹر علاقے میں <b>76 فیصد زمین 30 درجے سے زیادہ ڈھلوان ہے</b>
+      اور صرف 3.2 فیصد 5 درجے سے کم۔ بلندی وادی کی تہہ میں 2749 میٹر سے چوٹیوں پر 6141 میٹر تک
+      جاتی ہے۔ آگے کی ہر بات اسی سے طے ہوتی ہے۔</p></div></div>
+  <div class="g3 rv">
+    <div class="card"><span class="tag en">Elevation</span><span class="tag ur">بلندی</span>
+      <h3>3,045 m</h3>
+      <p class="en">High enough for a single short growing season; low enough that people already farm at this altitude nearby.</p>
+      <p class="ur">اتنی بلندی کہ سال میں ایک مختصر فصل ہو سکے؛ اور اتنی کم کہ قریب ہی لوگ اسی بلندی پر کاشت کرتے ہیں۔</p></div>
+    <div class="card"><span class="tag en">Existing cover</span><span class="tag ur">موجودہ سبزہ</span>
+      <h3>87 % <span style="font-size:.6em;color:var(--muted)">bare</span></h3>
+      <p class="en">Only 4.3 hectares show any vegetation in midsummer imagery. Effectively a blank site.</p>
+      <p class="ur">گرمیوں کی تصاویر میں صرف 4.3 ہیکٹر پر سبزہ نظر آتا ہے۔ عملاً ایک خالی جگہ۔</p></div>
+    <div class="card"><span class="tag en">Access</span><span class="tag ur">رسائی</span>
+      <h3>520 m</h3>
+      <p class="en">To the road — but 90 m above it on a steep face. A drivable track needs 745 m of switchbacks.</p>
+      <p class="ur">سڑک تک — مگر اس سے 90 میٹر اوپر، ایک کھڑی ڈھلان پر۔ گاڑی کے قابل راستے کے لیے 745 میٹر موڑ درکار ہیں۔</p></div>
+  </div>
+  <figure class="rv"><div class="fw"><img src="images/m_slope.jpg" alt="Slope map showing most of the valley steeper than 30 degrees" loading="lazy" decoding="async"></div>
+    <figcaption><span class="en"><b>Slope.</b> Red is unusable. The thin green ribbon along the valley
+      floor and the fan north of the river is essentially all the workable land there is.</span>
+      <span class="ur"><b>ڈھلان۔</b> سرخ رنگ ناقابلِ استعمال ہے۔ وادی کی تہہ کے ساتھ پتلی سبز پٹی اور
+      دریا کے شمال میں پھیلا میدان ہی تقریباً ساری قابلِ کاشت زمین ہے۔</span>
+      <span class="tier t1 tech">Tier 1 · 30 m</span></figcaption></figure>
+</div></section>
+</div>
+
+<!-- 02 -->
+<div class="panel" role="tabpanel" id="p2" aria-labelledby="t2" hidden>
+<section class="sec"><div class="wrap">
+  <div class="shead rv"><div class="left"><span class="lbl en">The water</span><span class="lbl ur">پانی</span><div class="ct">(02–08)</div></div>
+    <div class="right"><h2><span class="en">A bowl of ice reaching 6,325 metres</span><span class="ur">برف کا پیالہ، 6325 میٹر تک</span></h2>
+      <p class="en">The stream above Tabriz drains 23.9 km² of mountain. Roughly a third of it lies
+        under glacier ice — twenty small glaciers, the largest running 5.9 km down from a 6,300 m
+        summit and visible from the site itself.</p>
+      <p class="ur">تبریز کے اوپر بہنے والی ندی 23.9 مربع کلومیٹر پہاڑ کا پانی سمیٹتی ہے۔ اس کا
+        تقریباً ایک تہائی حصہ گلیشیئر کی برف کے نیچے ہے — بیس چھوٹے گلیشیئر، جن میں سب سے بڑا
+        6300 میٹر کی چوٹی سے 5.9 کلومیٹر نیچے آتا ہے اور مقام سے صاف نظر آتا ہے۔</p></div></div>
+  <div class="widget rv">
+    <div class="wtitle"><h3><span class="en">How much water, and when</span><span class="ur">کتنا پانی، اور کب</span></h3>
+      <span class="lbl en">Drag the season</span><span class="lbl ur">موسم بدلیے</span></div>
+    <div class="ctrl"><span class="lbl en">Season</span><span class="lbl ur">موسم</span>
+      <input type="range" id="sea" min="0" max="11" value="0" step="1" aria-label="Month"></div>
+    <div class="readout"><span class="big" id="flowv">40</span>
+      <span class="un"><span class="en">litres / second</span><span class="ur">لیٹر فی سیکنڈ</span></span></div>
+    <div class="mlabels"><span id="seaname">December</span><span>est. from basin transfer</span></div>
+    <div class="meter"><div class="fill" id="flowbar"></div></div>
+    <div class="verdictline" id="flowmsg"></div>
+  </div>
+  <div class="body w rv" style="margin-top:1.4rem">
+    <p class="en" style="font-size:.9rem;color:var(--muted)">Seasonal shape modelled from the
+      Karakoram glacier-fed regime, anchored on an estimated 0.66 m³/s mean annual.
+      <b>No flow has ever been gauged here.</b></p>
+    <p class="ur" style="font-size:.9rem;color:var(--muted)">موسمی تبدیلی قراقرم کے گلیشیائی نظام کے
+      مطابق بنائی گئی ہے، سالانہ اوسط 0.66 مکعب میٹر فی سیکنڈ کے تخمینے پر۔
+      <b>یہاں بہاؤ کبھی ناپا نہیں گیا۔</b></p>
+  </div>
+  <figure class="rv"><div class="fw"><img src="images/17_glacier_snow_system.jpg" alt="Regional glacier map with surge-type glaciers highlighted" loading="lazy" decoding="async"></div>
+    <figcaption><span class="en"><b>The glacier system.</b> Red outlines are surge-type glaciers.
+      Yellow is the Tabriz catchment.</span>
+      <span class="ur"><b>گلیشیائی نظام۔</b> سرخ خاکے وہ گلیشیئر ہیں جو اچانک آگے بڑھتے ہیں۔
+      پیلا رنگ تبریز کا آبگیر ہے۔</span> <span class="tier t2 tech">Tier 2</span></figcaption></figure>
+  <div class="body w rv" style="margin-top:3rem">
+    <h3><span class="en">Are the glaciers shrinking?</span><span class="ur">کیا گلیشیئر سکڑ رہے ہیں؟</span></h3>
+    <p class="gen en" style="margin-top:1rem">Mostly no — at least not yet. Published measurements of
+      ice thickness show these glaciers close to balance over 2000–2020, losing mass six to eight
+      times more slowly than the world average. The Karakoram is genuinely unusual. But the last
+      decade shows the start of a decline, so it should not be assumed to hold forever.</p>
+    <p class="gen ur" style="margin-top:1rem">زیادہ تر نہیں — کم از کم ابھی تک نہیں۔ برف کی موٹائی کی
+      شائع شدہ پیمائشیں بتاتی ہیں کہ 2000 سے 2020 تک یہ گلیشیئر تقریباً توازن میں رہے، اور عالمی
+      اوسط سے چھ سے آٹھ گنا آہستہ سکڑے۔ قراقرم اس معاملے میں واقعی غیر معمولی ہے۔ مگر پچھلی دہائی
+      میں کمی کا آغاز نظر آتا ہے، اس لیے یہ فرض نہیں کرنا چاہیے کہ یہ ہمیشہ رہے گا۔</p>
+    <div class="tech">
+      <div class="tw"><table>
+        <thead><tr><th>Period</th><th class="n">m w.e./yr</th><th>Reading</th></tr></thead>
+        <tbody><tr><td>2000–2010</td><td class="n">+0.038</td><td>near balance, slight gain</td></tr>
+        <tr class="bad"><td>2010–2020</td><td class="n">−0.207</td><td>loss</td></tr>
+        <tr class="hi"><td>2000–2020</td><td class="n">−0.085 ± 0.105</td><td>error exceeds signal</td></tr>
+        <tr><td>Global average</td><td class="n">−0.5 to −0.7</td><td>for scale</td></tr></tbody></table></div>
+      <div class="note warn"><span class="k">Method discarded</span>
+        <p>A Landsat snow-extent series across 73 scenes produced an apparent −47 %/decade trend. It
+        was an artefact of snowfall timing. Withdrawn. Glacier <i>area</i> from snapshots is the wrong
+        measurement; <i>elevation change</i> is the right one.</p></div>
+    </div>
+  </div>
+</div></section>
+</div>
+
+<!-- 03 -->
+<div class="panel" role="tabpanel" id="p3" aria-labelledby="t3" hidden>
+<section class="sec"><div class="wrap">
+  <div class="shead rv"><div class="left"><span class="lbl en">The canal</span><span class="lbl ur">نہر</span><div class="ct">(03–08)</div></div>
+    <div class="right"><h2><span class="en">Ninety-three metres</span><span class="ur">تیرانوے میٹر</span></h2>
+      <p class="en">This is the part that turned out easy. A canal 93 metres long, falling three
+        centimetres in every ten metres, carries water from the stream to a holding tank at 3,103 m.
+        From there it reaches the whole fan by gravity. No pumps, no tunnels, no rock blasting.</p>
+      <p class="ur">یہی حصہ سب سے آسان نکلا۔ 93 میٹر لمبی نہر، جو ہر دس میٹر پر تین سنٹی میٹر نیچے
+        آتی ہے، ندی سے پانی لے کر 3103 میٹر پر ایک ذخیرے تک پہنچاتی ہے۔ وہاں سے ثقل کے زور پر پورا
+        میدان سیراب ہو سکتا ہے۔ نہ پمپ، نہ سرنگ، نہ چٹان توڑنے کی ضرورت۔</p></div></div>
+  <div class="body w rv"><div class="note ok">
+    <span class="k en">Result worth noting</span><span class="k ur">قابلِ ذکر نتیجہ</span>
+    <p class="en">Routes optimised separately for <b>shortest</b>, <b>safest</b> and <b>lowest
+      construction difficulty</b> all converge on the same 89–93 m alignment. The terrain is so
+      constrained there is no trade-off to make.</p>
+    <p class="ur">جو راستے الگ الگ <b>مختصر ترین</b>، <b>محفوظ ترین</b> اور <b>کم ترین تعمیراتی
+      دشواری</b> کے لیے نکالے گئے، وہ سب ایک ہی 89 تا 93 میٹر لائن پر آ ملے۔ زمین اتنی تنگ ہے کہ
+      کوئی متبادل ہے ہی نہیں۔</p></div></div>
+  <div class="widget rv">
+    <div class="wtitle"><h3><span class="en">Walk the canal</span><span class="ur">نہر کے ساتھ چلیے</span></h3>
+      <span class="lbl en">Drag along its length</span><span class="lbl ur">لمبائی کے ساتھ سرکائیے</span></div>
+    <div class="ctrl"><span class="lbl en">Chainage</span><span class="lbl ur">فاصلہ</span>
+      <input type="range" id="chain" min="0" max="93" value="0" step="1" aria-label="Distance along the canal in metres"></div>
+    <div class="readout"><span class="big" id="chainv">+0.0</span>
+      <span class="un"><span class="en">metres of cut or fill</span><span class="ur">میٹر کھدائی یا بھراؤ</span></span></div>
+    <div class="mlabels"><span id="chainlbl">0 m along</span><span>93 m total, 0.3 % grade</span></div>
+    <div class="meter"><div class="fill" id="chainbar"></div></div>
+    <div class="verdictline" id="chainmsg"></div>
+  </div>
+  <figure class="rv"><div class="fw"><img src="images/m_canal.jpg" alt="Gravity envelope and least-cost canal route" loading="lazy" decoding="async"></div>
+    <figcaption><span class="en"><b>The canal and what it commands.</b> Dark green is land under 15°
+      that water can reach. Pink patches are gaps in the elevation data — they trace the gullies
+      exactly.</span><span class="ur"><b>نہر اور اس کے تحت زمین۔</b> گہرا سبز وہ زمین ہے جہاں پانی
+      پہنچ سکتا ہے۔ گلابی حصے بلندی کے ڈیٹا میں خلا ہیں — یہ بالکل نالوں کے راستے پر ہیں۔</span>
+      <span class="tier t2 tech">Tier 2 · 8 m</span></figcaption></figure>
+  <div class="tech">
+    <div class="body w rv" style="margin-top:3rem"><h3>Route D — the alternative worth arguing about</h3>
+      <p style="margin-top:1rem">Taking the intake 271 m higher gives <b>476 m of head instead of
+        207</b> — 2.3× the power for the same flow. The price is a different order of civil work.</p></div>
+    <div class="tw rv"><table>
+      <thead><tr><th>Route</th><th class="n">Intake</th><th class="n">Length</th><th class="n">Mean cut/fill</th><th class="n">Max fill</th><th class="n">Rock</th><th class="n">Head</th></tr></thead>
+      <tbody><tr class="hi"><td>A / B / C identical</td><td class="n">3103 m</td><td class="n">93 m</td><td class="n">1.98 m</td><td class="n">4.3 m</td><td class="n">0 m</td><td class="n">207 m</td></tr>
+      <tr><td>D combined</td><td class="n">3374 m</td><td class="n">542 m</td><td class="n">13.93 m</td><td class="n">44.2 m</td><td class="n">136 m</td><td class="n">476 m</td></tr></tbody></table></div>
+    <div class="body w rv"><p style="margin-top:1.3rem">A <b>44 m embankment</b> may kill Route D on
+      its own, and it crosses 480 m of high-hazard ground. It cannot be judged from an elevation model.</p></div>
+    <figure class="rv"><div class="fw"><img src="images/12_canal_profile_8m.jpg" alt="Canal long profile showing cut and fill" loading="lazy" decoding="async"></div>
+      <figcaption><b>Canal long profile.</b> Brown is cut into the hillside, blue is fill.</figcaption></figure>
+  </div>
+</div></section>
+</div>
+
+<!-- 04 -->
+<div class="panel" role="tabpanel" id="p4" aria-labelledby="t4" hidden>
+<section class="sec"><div class="wrap">
+  <div class="shead rv"><div class="left"><span class="lbl en">The land</span><span class="lbl ur">زمین</span><div class="ct">(04–08)</div></div>
+    <div class="right"><h2><span class="en">435 hectares in, 48 out</span><span class="ur">435 ہیکٹر میں سے 48</span></h2>
+      <p class="en">Here is the honest arithmetic. Gravity can reach 435 hectares. Most is too steep
+        to farm. Of what remains, much sits low enough that a glacial flood would reach it, and much
+        of the rest lies in the runout path of avalanches, rockfall or debris flows.</p>
+      <p class="ur">یہ رہا کھرا حساب۔ ثقل 435 ہیکٹر تک پانی پہنچا سکتی ہے۔ زیادہ تر زمین کاشت کے لیے
+        بہت ڈھلوان ہے۔ جو بچتی ہے، اس کا بڑا حصہ اتنا نیچے ہے کہ گلیشیائی سیلاب وہاں پہنچ جائے گا،
+        اور باقی برفانی تودوں، پتھروں اور ملبے کے راستے میں آتی ہے۔</p></div></div>
+  <div class="body w"><div class="funnel" id="funnel">
+    <div class="fr" style="--w:100%"><div class="bar"></div><div class="lbl2"><span class="en">Reachable by gravity</span><span class="ur">جہاں ثقل پانی پہنچا سکے</span></div><div class="val">434.7 ha</div></div>
+    <div class="fr" style="--w:47.7%"><div class="bar"></div><div class="lbl2"><span class="en">…gentle enough to work (under 25°)</span><span class="ur">…جو کافی ہموار ہو (25 درجے سے کم)</span></div><div class="val">207.4 ha</div></div>
+    <div class="fr" style="--w:39.1%"><div class="bar"></div><div class="lbl2"><span class="en">…genuinely good land (under 15°)</span><span class="ur">…واقعی اچھی زمین (15 درجے سے کم)</span></div><div class="val">170.0 ha</div></div>
+    <div class="fr" style="--w:19.1%"><div class="bar"></div><div class="lbl2"><span class="en">…above the glacial-flood stage</span><span class="ur">…گلیشیائی سیلاب کی سطح سے اوپر</span></div><div class="val">82.9 ha</div></div>
+    <div class="fr last"><div class="lbl2"><span class="en">…clear of avalanche, rockfall, debris flow</span><span class="ur">…برفانی تودے، پتھر اور ملبے سے محفوظ</span></div><div class="val">48.2 ha</div></div>
+  </div>
+  <p class="rv" style="margin-top:2rem"><span class="en">That 48 hectares is spread along four
+    kilometres of valley. <b>About 30 of it lies at Tabriz itself</b>, in two blocks — the larger one
+    21.3 ha. The rest are separate benches further downstream, reachable in principle but a different
+    scheme. A sketch drawn by eye before any of this guessed 35 ha.</span>
+    <span class="ur">یہ 48 ہیکٹر چار کلومیٹر لمبی وادی میں پھیلے ہوئے ہیں۔ <b>ان میں سے تقریباً
+    30 ہیکٹر خود تبریز میں ہیں</b>، دو ٹکڑوں میں — بڑا ٹکڑا 21.3 ہیکٹر۔ باقی نیچے کی طرف الگ
+    چبوترے ہیں، جہاں اصولاً پانی پہنچ سکتا ہے مگر وہ الگ منصوبہ ہوگا۔ تجزیے سے پہلے اندازے سے بنایا
+    گیا خاکہ 35 ہیکٹر تھا۔</span></p></div>
+  <div class="widget rv">
+    <div class="wtitle"><h3><span class="en">How high should the water arrive?</span><span class="ur">پانی کتنی بلندی پر پہنچے؟</span></h3>
+      <span class="lbl en">Drag the forebay level</span><span class="lbl ur">ذخیرے کی سطح بدلیے</span></div>
+    <div class="ctrl"><span class="lbl en">Level</span><span class="lbl ur">سطح</span>
+      <input type="range" id="lvl" min="3000" max="3220" value="3100" step="10" aria-label="Forebay water level in metres"></div>
+    <div class="readout"><span class="big" id="lvlv">211.0</span>
+      <span class="un"><span class="en">hectares commanded</span><span class="ur">ہیکٹر زیرِ آب</span></span></div>
+    <div class="mlabels"><span id="lvllbl">forebay at 3100 m</span><span>valley-wide, under 25° slope</span></div>
+    <div class="meter"><div class="fill" id="lvlbar"></div></div>
+    <div class="verdictline" id="lvlmsg"></div>
+  </div>
+  <figure class="rv"><div class="fw"><img src="images/m_flood.jpg" alt="Flood stages and the 48 hectare developable core" loading="lazy" decoding="async"></div>
+    <figcaption><span class="en"><b>What survives.</b> Blue bands show how far a flood would reach at
+      different heights. Dark green is land clear of everything.</span>
+      <span class="ur"><b>جو باقی بچتا ہے۔</b> نیلی پٹیاں دکھاتی ہیں کہ سیلاب مختلف سطحوں پر کہاں تک
+      پہنچے گا۔ گہرا سبز ہر خطرے سے محفوظ زمین ہے۔</span></figcaption></figure>
+  <div class="tech">
+    <div class="body w rv" style="margin-top:3rem"><h3>Agricultural suitability</h3>
+      <p style="margin-top:1rem">Classified by the FAO (1976) <b>maximum-limitation rule</b> — a
+      parcel is graded by its worst criterion, not a weighted average. Chosen deliberately: it
+      requires no invented weights.</p></div>
+    <div class="tw rv"><table><thead><tr><th>Class</th><th class="n">Area</th><th>Note</th></tr></thead>
+      <tbody><tr class="bad"><td>S1 highly suitable</td><td class="n">0.0 ha</td><td>stoniness caps every parcel until soil is surveyed</td></tr>
+      <tr class="hi"><td>S2 moderately suitable</td><td class="n">42.5 ha</td><td>converges with the 48.2 ha hazard result</td></tr>
+      <tr><td>S3 marginal</td><td class="n">29.4 ha</td><td></td></tr>
+      <tr><td>N not suitable</td><td class="n">1540.9 ha</td><td></td></tr></tbody></table></div>
+    <div class="body w rv"><p style="margin-top:1.4rem">The dominant limiting factor is not slope or
+      soil — it is <b>winter sun</b>. 82.6 ha of otherwise workable land is limited by terrain
+      shading; mid-December sunlit hours range from 0.0 to 9.2 per day.</p></div>
+    <figure class="rv"><div class="fw"><img src="images/m_suit.jpg" alt="Agricultural suitability and winter sun hours" loading="lazy" decoding="async"></div>
+      <figcaption><b>Suitability and the winter-sun constraint.</b></figcaption></figure>
+  </div>
+</div></section>
+</div>
+
+<!-- 05 -->
+<div class="panel" role="tabpanel" id="p5" aria-labelledby="t5" hidden>
+<section class="sec"><div class="wrap">
+  <div class="shead rv"><div class="left"><span class="lbl en">The hazard</span><span class="lbl ur">خطرات</span><div class="ct">(05–08)</div></div>
+    <div class="right"><h2><span class="en">1905. 1964. 2017.</span><span class="ur">1905۔ 1964۔ 2017۔</span></h2>
+      <p class="en">Tabriz sits downstream of the Khurdopin Glacier, which surges roughly every twenty
+        years, dams the Shimshal River, and then releases the lake it has made. It has done so three
+        times on record. The 2017 flood damaged the Shimshal road and bridges.</p>
+      <p class="ur">تبریز خردوپین گلیشیئر کے نیچے واقع ہے، جو تقریباً ہر بیس سال بعد اچانک آگے بڑھتا
+        ہے، شمشال دریا کو بند کر دیتا ہے، اور پھر بننے والی جھیل کو یکدم چھوڑ دیتا ہے۔ ریکارڈ کے
+        مطابق ایسا تین بار ہو چکا ہے۔ 2017 کے سیلاب نے شمشال روڈ اور پل تباہ کیے تھے۔</p></div></div>
+  <div class="body w rv"><div class="note ok">
+    <span class="k en">Good news</span><span class="k ur">اچھی خبر</span>
+    <p class="en">Sentinel-2 mapping across five cloud-free seasons found <b>no persistent glacial lake
+      in the Tabriz catchment itself</b>. Direct outburst risk to the intake is low.</p>
+    <p class="ur">پانچ صاف موسموں کی سیٹلائٹ تصاویر میں <b>تبریز کے اپنے آبگیر میں کوئی مستقل
+      گلیشیائی جھیل نہیں ملی</b>۔ انٹیک کو براہِ راست سیلاب کا خطرہ کم ہے۔</p></div></div>
+  <div class="widget rv">
+    <div class="wtitle"><h3><span class="en">Raise the river and see what goes</span><span class="ur">دریا کی سطح بڑھائیے اور دیکھیے کیا ڈوبتا ہے</span></h3>
+      <span class="lbl en">Drag the flood stage</span><span class="lbl ur">سیلاب کی سطح بدلیے</span></div>
+    <div class="ctrl"><span class="lbl en">Stage</span><span class="lbl ur">سطح</span>
+      <input type="range" id="stage" min="0" max="100" value="30" step="5" aria-label="Flood stage in metres above the river"></div>
+    <div class="readout"><span class="big" id="lostv">87.1</span>
+      <span class="un"><span class="en">hectares of good land lost</span><span class="ur">ہیکٹر اچھی زمین ضائع</span></span></div>
+    <div class="mlabels"><span id="stagelbl">+30 m above the river bed</span><span>of 170 ha under 15°</span></div>
+    <div class="meter"><div class="fill" id="lostbar"></div></div>
+    <div class="verdictline" id="stagemsg"></div>
+  </div>
+  <div class="body w rv" style="margin-top:1.4rem">
+    <p class="en" style="font-size:.9rem;color:var(--muted)">The <b>+30 m</b> figure used throughout
+      this study is a judgement, not a computed design flood — and it drives the single largest cut in
+      the land funnel.</p>
+    <p class="ur" style="font-size:.9rem;color:var(--muted)">اس مطالعے میں استعمال ہونے والا
+      <b>30 میٹر</b> کا اندازہ ایک فیصلہ ہے، کوئی حساب کیا ہوا ڈیزائن سیلاب نہیں — اور زمین کے حساب
+      میں سب سے بڑی کمی اسی سے آتی ہے۔</p></div>
+  <div class="tw rv"><table>
+    <thead><tr><th>Powerhouse option</th><th class="n">Head</th><th class="n">Above river</th><th>Verdict</th></tr></thead>
+    <tbody><tr><td>337 m penstock</td><td class="n">96 m</td><td class="n">+172 m</td><td>safe</td></tr>
+    <tr class="hi"><td>967 m penstock</td><td class="n">207 m</td><td class="n">+62 m</td><td>selected</td></tr>
+    <tr class="bad"><td>1712–2276 m penstock</td><td class="n">282–292 m</td><td class="n">~0 m</td><td>in the channel — rejected</td></tr></tbody></table></div>
+  <figure class="rv"><div class="fw"><img src="images/m_hazard.jpg" alt="Multi-hazard index map" loading="lazy" decoding="async"></div>
+    <figcaption><span class="en"><b>Multi-hazard screen.</b> Avalanche affects 63 % of commandable land
+      — the largest single constraint.</span><span class="ur"><b>خطرات کا جائزہ۔</b> برفانی تودے
+      63 فیصد قابلِ آبپاشی زمین کو متاثر کرتے ہیں — سب سے بڑی واحد رکاوٹ۔</span>
+      <span class="tier t1 tech">Tier 1</span></figcaption></figure>
+  <div class="body w tech rv"><div class="note warn"><span class="k">Not assessed</span>
+    <p>Seismic hazard. The USGS catalogue records 590 events M≥4.0 within 200 km since 1900, the
+    largest M6.3 at 132 km — but a catalogue is not a hazard assessment. A design ground motion
+    requires a PSHA, and seismically-triggered landslide susceptibility is untouched.</p></div></div>
+</div></section>
+</div>
+
+<!-- 06 -->
+<div class="panel" role="tabpanel" id="p6" aria-labelledby="t6" hidden>
+<section class="sec"><div class="wrap">
+  <div class="shead rv"><div class="left"><span class="lbl en">The village</span><span class="lbl ur">بستی</span><div class="ct">(06–08)</div></div>
+    <div class="right"><h2><span class="en">About forty households</span><span class="ur">تقریباً چالیس گھرانے</span></h2>
+      <p class="en">Thirty hectares of watered, buildable land supports something like 150 to 300
+        people. A small village, and a viable one. Fields and orchards take the best ground; houses
+        go on the poorer margins, which is how villages are laid out throughout Hunza.</p>
+      <p class="ur">تیس ہیکٹر سیراب اور قابلِ تعمیر زمین تقریباً 150 سے 300 افراد کو سہارا دے سکتی
+        ہے۔ ایک چھوٹا مگر قابلِ عمل گاؤں۔ بہترین زمین کھیتوں اور باغات کے لیے، اور گھر کم زرخیز
+        کناروں پر — پورے ہنزہ میں گاؤں اسی طرح بستے ہیں۔</p></div></div>
+  <div class="acc rv">
+    <details open><summary><span><span class="en">Irrigated fields — 24 ha</span><span class="ur">سیراب کھیت — 24 ہیکٹر</span></span><span class="ic">+</span></summary>
+      <div class="content"><span class="en">Annual crops on the gentlest watered ground, under 10° slope. The largest single block is 21.3 ha.</span><span class="ur">سب سے ہموار سیراب زمین پر سالانہ فصلیں، 10 درجے سے کم ڈھلان۔ سب سے بڑا ٹکڑا 21.3 ہیکٹر ہے۔</span></div></details>
+    <details><summary><span><span class="en">Orchards and tree crops — 11 ha</span><span class="ur">باغات اور درخت — 11 ہیکٹر</span></span><span class="ic">+</span></summary>
+      <div class="content"><span class="en">Terraceable slopes with at least 2.5 hours of mid-December sun — the frost constraint that shapes where trees can survive.</span><span class="ur">وہ ڈھلانیں جہاں دسمبر میں کم از کم ڈھائی گھنٹے دھوپ پڑتی ہو — یہی پالے کی رکاوٹ طے کرتی ہے کہ درخت کہاں جی سکتے ہیں۔</span></div></details>
+    <details><summary><span><span class="en">Housing — 2 ha, about 40 plots</span><span class="ur">رہائش — 2 ہیکٹر، تقریباً 40 پلاٹ</span></span><span class="ic">+</span></summary>
+      <div class="content"><span class="en">300 m² per plot plus 60 % for lanes and yards, placed on agriculturally poorer ground so the best land stays in cultivation.</span><span class="ur">فی پلاٹ 300 مربع میٹر، اور گلیوں اور صحن کے لیے مزید 60 فیصد؛ کم زرخیز زمین پر رکھے گئے تاکہ بہترین زمین کاشت میں رہے۔</span></div></details>
+    <details><summary><span><span class="en">Public core — 0.4 ha</span><span class="ur">عوامی مرکز — 0.4 ہیکٹر</span></span><span class="ic">+</span></summary>
+      <div class="content"><span class="en">School, clinic and community space, sized from population and placed adjacent to housing on the gentlest available ground.</span><span class="ur">اسکول، کلینک اور اجتماعی جگہ، آبادی کے حساب سے، رہائش کے ساتھ سب سے ہموار زمین پر۔</span></div></details>
+    <details><summary><span><span class="en">Grazing — 11 ha</span><span class="ur">چراگاہ — 11 ہیکٹر</span></span><span class="ic">+</span></summary>
+      <div class="content"><span class="en">Rough pasture within walking distance, on buildable ground not needed for crops.</span><span class="ur">پیدل فاصلے پر کھردری چراگاہ، اُس زمین پر جو فصل کے لیے درکار نہیں۔</span></div></details>
+  </div>
+  <div class="widget rv">
+    <div class="wtitle"><h3><span class="en">How many people fit?</span><span class="ur">کتنے لوگ سما سکتے ہیں؟</span></h3>
+      <span class="lbl en">Set the land each person needs</span><span class="lbl ur">فی فرد زمین مقرر کیجیے</span></div>
+    <div class="ctrl"><span class="lbl en">Land</span><span class="lbl ur">زمین</span>
+      <input type="range" id="hp" min="6" max="30" value="15" step="1" aria-label="Hectares of irrigated land per person, in hundredths"></div>
+    <div class="readout"><span class="big" id="hpv">200</span>
+      <span class="un"><span class="en">people at Tabriz</span><span class="ur">افراد تبریز میں</span></span></div>
+    <div class="mlabels"><span id="hplbl">0.15 ha per person</span><span>on 30 ha of usable land</span></div>
+    <div class="meter"><div class="fill" id="hpbar"></div></div>
+    <div class="verdictline" id="hpmsg"></div>
+  </div>
+  <div class="widget rv">
+    <div class="wtitle"><h3><span class="en">Will the power be enough?</span><span class="ur">کیا بجلی کافی ہوگی؟</span></h3>
+      <span class="lbl en">Set flow and head</span><span class="lbl ur">بہاؤ اور ہیڈ مقرر کیجیے</span></div>
+    <div class="ctrl"><span class="lbl en">Flow</span><span class="lbl ur">بہاؤ</span>
+      <input type="range" id="q" min="15" max="500" value="40" step="5" aria-label="Flow in litres per second">
+      <span class="mono" id="qv" style="min-width:5rem;text-align:right">40 l/s</span></div>
+    <div class="ctrl"><span class="lbl en">Head</span><span class="lbl ur">ہیڈ</span><div class="chips" id="heads">
+      <button class="chip" data-h="96">96 m</button>
+      <button class="chip" data-h="207" aria-pressed="true">207 m</button>
+      <button class="chip" data-h="476">476 m</button></div></div>
+    <div class="readout"><span class="big" id="kw">48.8</span>
+      <span class="un"><span class="en">kilowatts</span><span class="ur">کلوواٹ</span></span></div>
+    <div class="meter"><div class="fill" id="kwbar"></div><div class="mark" style="left:8%"></div>
+      <div class="mark" style="left:16%"></div><div class="mark" style="left:32%"></div></div>
+    <div class="mlabels"><span>lighting 8 kW</span><span>+ appliances 16 kW</span><span>+ heating 32 kW</span></div>
+    <div class="verdictline" id="kwmsg"></div>
+  </div>
+  <figure class="rv"><div class="fw"><img src="images/m_plan.jpg" alt="Land-use allocation across the Tabriz fan" loading="lazy" decoding="async"></div>
+    <figcaption><span class="en"><b>Land-use allocation.</b> Read this as where each use could go, not
+      as a village layout.</span><span class="ur"><b>زمین کی تقسیم۔</b> اسے یوں پڑھیے کہ ہر استعمال
+      کہاں ہو سکتا ہے، نہ کہ گاؤں کا نقشہ۔</span></figcaption></figure>
+  <div class="body w tech rv">
+    <div class="tw"><table><thead><tr><th>Demand, 40 households</th><th class="n">kW</th><th>Supply (η = 0.60)</th><th class="n">kW</th></tr></thead>
+    <tbody><tr><td>200 W/hh — lighting, charging</td><td class="n">8.0</td><td>Winter min, 40 l/s</td><td class="n">48.8</td></tr>
+    <tr class="hi"><td>400 W/hh — + appliances</td><td class="n">16.0</td><td>Shoulder, 100 l/s</td><td class="n">122.0</td></tr>
+    <tr><td>800 W/hh — + cooking, heating</td><td class="n">32.0</td><td>Summer, 400 l/s</td><td class="n">487.8</td></tr></tbody></table></div>
+    <p style="margin-top:1.3rem">At forty households the winter minimum covers even the heating case,
+      with margin. That conclusion rests entirely on a winter flow that has never been gauged.</p>
+    <div class="note warn"><span class="k">Two failures found</span>
+    <p><b>Water pressure.</b> The tank site gives 15.2 bar static to the mean dwelling; fittings want
+      2–4 bar. Needs break-pressure tanks — or a compact layout, which removes the problem at source.</p>
+    <p><b>Wastewater.</b> <b>No compliant site exists</b> below the settlement that is also more than
+      100 m from a watercourse, off cultivated ground and above the flood stage.</p></div></div>
+  <figure class="rv"><div class="fw"><img src="images/m_infra.jpg" alt="Powerhouse, transmission, water supply and waste siting" loading="lazy" decoding="async"></div>
+    <figcaption><span class="en"><b>Infrastructure.</b> Powerhouse, transmission, water, waste and access.</span><span class="ur"><b>بنیادی ڈھانچہ۔</b> پاور ہاؤس، ترسیل، پانی، فضلہ اور رسائی۔</span></figcaption></figure>
+  <figure class="rv"><div class="fw"><img src="images/18_3d_development_model.jpg" alt="3D views of the terrain with the proposed scheme" loading="lazy" decoding="async"></div>
+    <figcaption><span class="en"><b>The scheme in three dimensions.</b></span><span class="ur"><b>منصوبہ تین جہتوں میں۔</b></span></figcaption></figure>
+</div></section>
+</div>
+
+<!-- band -->
+<section class="band rv">
+  <img src="images/photo_lake.jpg" alt="A high alpine lake below snow peaks in the Karakoram" loading="lazy" decoding="async">
+  <div class="bi">
+    <h2><span class="en">Water has been moved here before</span><span class="ur">یہاں پہلے بھی پانی موڑا گیا ہے</span></h2>
+    <p class="en">Shimshal village sits at about the same altitude, a few hours down the valley. Its
+      fields are fed by channels cut along the hillside, some of them generations old. This study
+      tests the same idea on new ground.</p>
+    <p class="ur">شمشال گاؤں تقریباً اسی بلندی پر ہے، وادی میں چند گھنٹے کے فاصلے پر۔ وہاں کے کھیت
+      پہاڑ کے ساتھ کاٹی گئی نہروں سے سیراب ہوتے ہیں، جن میں سے کچھ نسلوں پرانی ہیں۔ یہ مطالعہ وہی
+      ترکیب نئی زمین پر آزماتا ہے۔</p>
+  </div>
+</section>
+
+<!-- 07 -->
+<div class="panel" role="tabpanel" id="p7" aria-labelledby="t7" hidden>
+<section class="sec"><div class="wrap">
+  <div class="shead rv"><div class="left"><span class="lbl en">Unknowns</span><span class="lbl ur">نامعلوم</span><div class="ct">(07–08)</div></div>
+    <div class="right"><h2><span class="en">What a satellite cannot tell you</span><span class="ur">جو سیارہ نہیں بتا سکتا</span></h2>
+      <p class="en">Every number on this site comes from orbit. Some things cannot be improved that
+        way, and one in particular blocks everything downstream.</p>
+      <p class="ur">اس صفحے کا ہر عدد خلا سے آیا ہے۔ کچھ چیزیں اس طرح معلوم نہیں کی جا سکتیں، اور
+        ایک خاص چیز باقی سب کو روک دیتی ہے۔</p></div></div>
+  <div class="g2 rv">
+    <div class="card warn"><span class="tag en">Blocking</span><span class="tag ur">فیصلہ کن رکاوٹ</span>
+      <h3><span class="en">The intake level is unknown</span><span class="ur">انٹیک کی بلندی معلوم نہیں</span></h3>
+      <p class="en">It sits inside a 0.53 ha void in the elevation model — a narrow shadowed gully
+        where stereo matching fails. Google Earth reads 3156 m there; two independent models agree on
+        ~3095 m. Every head figure scales off this number. <b>Requires GNSS.</b></p>
+      <p class="ur">یہ بلندی کے ماڈل میں 0.53 ہیکٹر کے خلا میں ہے — ایک تنگ، سایہ دار نالہ جہاں
+        پیمائش ناکام ہو جاتی ہے۔ گوگل ارتھ وہاں 3156 میٹر بتاتا ہے؛ دو آزاد ماڈل 3095 میٹر پر متفق
+        ہیں۔ ہیڈ کا ہر عدد اسی پر منحصر ہے۔ <b>جی این ایس ایس ضروری ہے۔</b></p></div>
+    <div class="card warn"><span class="tag en">Blocking</span><span class="tag ur">فیصلہ کن رکاوٹ</span>
+      <h3><span class="en">Flow has never been measured</span><span class="ur">بہاؤ کبھی ناپا نہیں گیا</span></h3>
+      <p class="en">All discharge figures are transferred from a neighbouring basin. Winter minimum is
+        both the binding constraint and the hardest thing to estimate remotely. <b>A full annual
+        gauging record is needed.</b></p>
+      <p class="ur">بہاؤ کے تمام اعداد ایک پڑوسی طاس سے لیے گئے ہیں۔ سردیوں کا کم سے کم بہاؤ ہی اصل
+        رکاوٹ ہے اور دور سے اندازہ لگانا سب سے مشکل۔ <b>پورے سال کا ریکارڈ درکار ہے۔</b></p></div>
+    <div class="card"><span class="tag en">Shapes the design</span><span class="tag ur">ڈیزائن پر اثر</span>
+      <h3><span class="en">The flood stage is a judgement</span><span class="ur">سیلاب کی سطح ایک اندازہ ہے</span></h3>
+      <p class="en">The +30 m threshold drives the single largest cut in the land funnel — 170 ha down
+        to 83 ha. Replacing it needs lake volume, a breach hydrograph and hydraulic routing.</p>
+      <p class="ur">30 میٹر کی حد زمین کے حساب میں سب سے بڑی کمی لاتی ہے — 170 ہیکٹر سے 83 ہیکٹر۔
+        اسے بدلنے کے لیے جھیل کا حجم اور سیلاب کا باقاعدہ ماڈل چاہیے۔</p></div>
+    <div class="card"><span class="tag en">Shapes the design</span><span class="tag ur">ڈیزائن پر اثر</span>
+      <h3><span class="en">Nothing has been walked</span><span class="ur">کچھ بھی زمین پر نہیں دیکھا گیا</span></h3>
+      <p class="en">The canal route crosses 40 m of void-filled ground and 88 m classed high-hazard.
+        Slope stability, rock quality and seepage are unassessed.</p>
+      <p class="ur">نہر کا راستہ 40 میٹر ایسی زمین سے گزرتا ہے جس کا ڈیٹا خلا سے بھرا گیا، اور
+        88 میٹر بلند خطرے والی زمین سے۔ ڈھلان کی مضبوطی اور رساؤ کا جائزہ نہیں لیا گیا۔</p></div>
+    <div class="card"><span class="tag en">May be decisive</span><span class="tag ur">شاید سب سے اہم</span>
+      <h3><span class="en">Land and water rights</span><span class="ur">زمین اور پانی کے حقوق</span></h3>
+      <p class="en">Not a GIS question, and potentially the real constraint. Shimshal has strong
+        customary governance of pasture and water. Who holds rights to this stream is unanswered here.</p>
+      <p class="ur">یہ نقشہ سازی کا سوال نہیں، اور شاید اصل رکاوٹ یہی ہو۔ شمشال میں چراگاہ اور پانی
+        پر مضبوط روایتی نظام ہے۔ اس ندی پر کس کا حق ہے، یہ یہاں طے نہیں ہوا۔</p></div>
+    <div class="card"><span class="tag en">Untouched</span><span class="tag ur">بالکل نہیں دیکھا گیا</span>
+      <h3><span class="en">Seismic design</span><span class="ur">زلزلے کا ڈیزائن</span></h3>
+      <p class="en">Northern Pakistan is seismically active. No hazard analysis was obtained and no
+        design ground motion exists for this site.</p>
+      <p class="ur">شمالی پاکستان زلزلوں کے لحاظ سے متحرک علاقہ ہے۔ اس مقام کے لیے کوئی باقاعدہ
+        تجزیہ حاصل نہیں کیا گیا۔</p></div>
+  </div>
+</div></section>
+</div>
+
+<!-- 08 -->
+<div class="panel" role="tabpanel" id="p8" aria-labelledby="t8" hidden>
+<section class="sec"><div class="wrap">
+  <div class="shead rv"><div class="left"><span class="lbl en">Method</span><span class="lbl ur">طریقہ کار</span><div class="ct">(08–08)</div></div>
+    <div class="right"><h2><span class="en">Everything is logged</span><span class="ur">ہر چیز درج ہے</span></h2>
+      <p class="en">Every dataset carries a row recording source, resolution, date, vertical datum,
+        licence, and whether it is measured, modelled or assumed. Every analysis carries a log entry
+        with exact parameters and a verification check.</p>
+      <p class="ur">ہر ڈیٹاسیٹ کے ساتھ اس کا ماخذ، ریزولوشن، تاریخ، عمودی بنیاد، لائسنس، اور یہ درج
+        ہے کہ وہ ناپا گیا ہے، ماڈل سے نکلا ہے یا فرض کیا گیا ہے۔ ہر تجزیے کا اندراج اس کے تمام
+        پیمانوں اور جانچ کے ساتھ موجود ہے۔</p></div></div>
+  <div class="ur"><span class="enonly">Technical tables and sources remain in English</span></div>
+  <div class="tw rv"><table>
+    <thead><tr><th>Tier</th><th>Data</th><th>Valid for</th><th>Not valid for</th></tr></thead>
+    <tbody><tr><td><span class="tier t1">T1</span></td><td>30 m DEM, global rasters</td><td>Route screening, catchment area, hectares ±20 %</td><td>Any gradient, head or volume design</td></tr>
+    <tr><td><span class="tier t2">T2</span></td><td>8 m DEM, Sentinel-2 10 m</td><td>Corridor narrowing, hazard mapping</td><td>Final invert levels, penstock design</td></tr>
+    <tr><td><span class="tier">T3</span></td><td>RTK GNSS, drone, gauged flow, boreholes</td><td>Construction design</td><td>—</td></tr></tbody></table></div>
+  <div class="body w rv" style="margin-top:3rem">
+    <h3><span class="en">Corrections made during the study</span><span class="ur">مطالعے کے دوران کی گئی تصحیحات</span></h3>
+    <p style="margin-top:1rem"><span class="en">Each of these was found and fixed during the work.
+      They are listed so the same mistakes are not repeated.</span><span class="ur">یہ سب کام کے
+      دوران پکڑی اور درست کی گئیں۔ یہاں اس لیے درج ہیں کہ وہی غلطیاں دوبارہ نہ ہوں۔</span></p>
+    <ul class="tick">
+      <li>Unconstrained hazard cone returned 100 % exposure. Replaced with flow-path constrained runout.</li>
+      <li>Canal routed to the wrong target level, needing 35 m of embankment.</li>
+      <li>Forebay optimiser under-constrained — returned a 735 m head.</li>
+      <li>Deep powerhouse options over-promised before GLOF screening rejected them.</li>
+      <li>"No glaciers in the catchment" — a test compared Web Mercator metres against degrees.</li>
+      <li>Catchment truncated by the analysis grid — real area 23.90 km², not 15.43.</li>
+      <li>Glacier trend from snow extent — an artefact of snowfall timing.</li>
+      <li>Settlement pushed 650 m above its own fields by an over-strict rule.</li>
+    </ul>
+  </div>
+  <div class="body w rv" style="margin-top:3rem"><h3>Sources</h3>
+    <p class="mono" style="font-size:.76rem;line-height:2;color:var(--muted);margin-top:1rem">
+      Copernicus DEM GLO-30 · ESA/Airbus · 30 m · EGM2008<br>
+      HMA 8 m DEM Mosaic · Shean, D. 2017 · NASA NSIDC DAAC · doi:10.5067/KXOVQ9L172S2<br>
+      Randolph Glacier Inventory 6.0 &amp; 7.0 · RGI Consortium / GLIMS<br>
+      Hugonnet, R. et al. 2021 · Nature 592:726–731 · doi:10.6096/13<br>
+      Landsat Collection 2 · USGS via Microsoft Planetary Computer<br>
+      Sentinel-2 L2A · ESA · ESA WorldCover 2021 · SoilGrids v2.0 · ISRIC<br>
+      OpenStreetMap contributors, ODbL · USGS FDSN catalogue
+    </p></div>
+  <div class="body w rv" style="margin-top:3rem"><h3><span class="en">Terms</span><span class="ur">اصطلاحات</span></h3>
+    <dl class="gl">
+      <dt>Gravity command</dt><dd><span class="en">The land a canal can water without pumping.</span><span class="ur">وہ زمین جسے نہر بغیر پمپ کے سیراب کر سکے۔</span></dd>
+      <dt>Head</dt><dd><span class="en">The vertical drop water falls through to a turbine. More head means more power from the same flow.</span><span class="ur">وہ عمودی بلندی جہاں سے پانی ٹربائن پر گرتا ہے۔ زیادہ ہیڈ کا مطلب اُتنے ہی پانی سے زیادہ بجلی۔</span></dd>
+      <dt>Forebay</dt><dd><span class="en">A small tank where the canal ends, holding water steady before the pipe down to the turbine.</span><span class="ur">نہر کے آخر میں ایک چھوٹا ذخیرہ، جو ٹربائن تک جانے والے پائپ سے پہلے پانی کو ہموار رکھتا ہے۔</span></dd>
+      <dt>GLOF</dt><dd><span class="en">Glacial lake outburst flood — a glacier dams a river, a lake builds behind it, and the dam fails.</span><span class="ur">گلیشیائی جھیل کا سیلاب — گلیشیئر دریا کو بند کرتا ہے، پیچھے جھیل بنتی ہے، اور پھر بند ٹوٹ جاتا ہے۔</span></dd>
+      <dt>Surge-type glacier</dt><dd><span class="en">A glacier that periodically advances far faster than normal, sometimes kilometres in months.</span><span class="ur">وہ گلیشیئر جو وقفے وقفے سے معمول سے کہیں تیز آگے بڑھتا ہے، کبھی مہینوں میں کئی کلومیٹر۔</span></dd>
+      <dt>Mass balance</dt><dd><span class="en">Whether a glacier is gaining or losing ice, in metres of water equivalent per year.</span><span class="ur">گلیشیئر برف کھو رہا ہے یا بڑھا رہا ہے، سالانہ میٹر پانی کے برابر میں۔</span></dd>
+    </dl></div>
+</div></section>
+</div>
+</main>
+
+<section class="pager" aria-label="Move between topics">
+  <div class="ph"><span class="en">Continue reading</span><span class="ur">مزید پڑھیے</span></div>
+  <div class="tabs"><button class="tab" data-i="0" aria-current="true"><i>01</i><span class="en">The site</span><span class="ur">مقام</span></button><button class="tab" data-i="1" aria-current="false"><i>02</i><span class="en">The water</span><span class="ur">پانی</span></button><button class="tab" data-i="2" aria-current="false"><i>03</i><span class="en">The canal</span><span class="ur">نہر</span></button><button class="tab" data-i="3" aria-current="false"><i>04</i><span class="en">The land</span><span class="ur">زمین</span></button><button class="tab" data-i="4" aria-current="false"><i>05</i><span class="en">The hazard</span><span class="ur">خطرات</span></button><button class="tab" data-i="5" aria-current="false"><i>06</i><span class="en">The village</span><span class="ur">بستی</span></button><button class="tab" data-i="6" aria-current="false"><i>07</i><span class="en">Unknowns</span><span class="ur">نامعلوم</span></button><button class="tab" data-i="7" aria-current="false"><i>08</i><span class="en">Method</span><span class="ur">طریقہ کار</span></button></div>
+  <div class="pgnav">
+    <button class="pgbtn prev" id="pgPrev"><span class="ar">&#8592;</span><span class="t">
+      <small><span class="en">Previous</span><span class="ur">پچھلا</span></small>
+      <span id="pgPrevT"></span></span></button>
+    <button class="pgbtn next" id="pgNext"><span class="t">
+      <small><span class="en">Next</span><span class="ur">اگلا</span></small>
+      <span id="pgNextT"></span></span><span class="ar">&#8594;</span></button>
+  </div>
+</section>
+
+
+<footer><div class="wrap">
+  <p class="en"><b>This is a screening study, not a plan.</b> It is built entirely from open data and
+    has never been checked on the ground. No boundary shown here has been surveyed, no flow has been
+    gauged, no soil pit has been dug, and no landowner has been consulted. Its purpose is to say where
+    the expensive investigations should be concentrated — and, where the data cannot answer a
+    question, to say so plainly rather than invent a number.</p>
+  <p class="ur"><b>یہ ایک ابتدائی جائزہ ہے، منصوبہ نہیں۔</b> یہ مکمل طور پر کھلے ڈیٹا سے بنا ہے اور
+    زمین پر کبھی جانچا نہیں گیا۔ یہاں دکھائی گئی کوئی حد ناپی نہیں گئی، کوئی بہاؤ ماپا نہیں گیا، کوئی
+    مٹی کا نمونہ نہیں لیا گیا، اور کسی زمیندار سے بات نہیں ہوئی۔ اس کا مقصد یہ بتانا ہے کہ مہنگی
+    تحقیق کہاں مرکوز ہونی چاہیے — اور جہاں ڈیٹا جواب نہ دے سکے، وہاں صاف کہہ دینا کہ جواب نہیں ہے۔</p>
+  <p class="mono" style="margin-top:1.6rem;font-size:.7rem;letter-spacing:.05em">
+    36.484821 N · 75.157793 E · EPSG:32643 · EGM2008 · 2026</p>
+</div></footer>
+
+</div></div>
+<div id="lb" role="dialog" aria-modal="true" aria-label="Enlarged map"><button class="x">Close ✕</button><img alt=""></div>
+
+<script>
+(function(){
+"use strict";
+var root=document.documentElement;
+var RM=window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+var CAN=("IntersectionObserver" in window)&&!RM;
+if(CAN)root.classList.add("js-anim");
+
+/* SAFETY NET registered before any other statement: if anything below throws,
+   the page still shows all its content and final numbers. */
+function revealAll(){
+  [].slice.call(document.querySelectorAll(".rv:not(.in),.fr:not(.in)")).forEach(function(el){el.classList.add("in")});
+  [].slice.call(document.querySelectorAll("[data-to]")).forEach(function(el){
+    if(el.textContent==="0"||el.textContent==="")
+      el.textContent=parseFloat(el.dataset.to).toFixed(parseInt(el.dataset.dec,10));});
+}
+setTimeout(revealAll,2600);
+window.addEventListener("load",function(){setTimeout(revealAll,1200)});
+
+/* ---- reveal (defined FIRST so nothing below dereferences it early) ---- */
+var io=CAN?new IntersectionObserver(function(es){es.forEach(function(e){
+  if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}})},
+  {threshold:.1,rootMargin:"0px 0px -5% 0px"}):null;
+function observeIn(scope){if(!io)return;
+  [].slice.call((scope||document).querySelectorAll(".rv:not(.in),.fr:not(.in)"))
+    .forEach(function(el){io.observe(el)});}
+observeIn(document);
+
+/* ---- language ---- */
+var le=document.getElementById("l-en"),lu=document.getElementById("l-ur");
+function setLang(L,save){root.setAttribute("data-lang",L);root.setAttribute("lang",L);
+  document.body.setAttribute("dir",L==="ur"?"rtl":"ltr");
+  le.setAttribute("aria-pressed",String(L==="en"));lu.setAttribute("aria-pressed",String(L==="ur"));
+  if(save){try{localStorage.setItem("tz-lang",L)}catch(e){}}
+  if(typeof pager==="function")pager(CUR);
+  if(typeof paint==="function")paint();}
+var sl=null;try{sl=localStorage.getItem("tz-lang")}catch(e){}
+le.onclick=function(){setLang("en",true)};lu.onclick=function(){setLang("ur",true)};
+
+/* ---- mode ---- */
+var g=document.getElementById("m-gen"),t=document.getElementById("m-tech");
+function setMode(m,save){root.setAttribute("data-mode",m);
+  g.setAttribute("aria-pressed",String(m==="general"));
+  t.setAttribute("aria-pressed",String(m==="technical"));
+  if(save){try{localStorage.setItem("tz-mode",m)}catch(e){}}}
+var sm=null;try{sm=localStorage.getItem("tz-mode")}catch(e){}
+g.onclick=function(){setMode("general",true)};t.onclick=function(){setMode("technical",true)};
+
+/* ---- tabs (two bars: the sticky one at the top, the pager at the foot) ---- */
+var allTabs=[].slice.call(document.querySelectorAll(".tab")),
+    topTabs=[].slice.call(document.querySelectorAll(".tabwrap .tab")),
+    panels=[].slice.call(document.querySelectorAll(".panel")),
+    NAMES=topTabs.map(function(t){
+      return {en:(t.querySelector(".en")||{}).textContent||"",
+              ur:(t.querySelector(".ur")||{}).textContent||""};});
+var pgPrev=document.getElementById("pgPrev"),pgNext=document.getElementById("pgNext"),
+    pgPrevT=document.getElementById("pgPrevT"),pgNextT=document.getElementById("pgNextT"),
+    CUR=0;
+function idxOf(el){return parseInt(el.getAttribute("data-i"),10)||0;}
+function pager(i){
+  if(!pgPrev)return;
+  var ur=root.getAttribute("data-lang")==="ur";
+  pgPrev.disabled=(i===0); pgNext.disabled=(i===panels.length-1);
+  pgPrevT.textContent=i>0?(ur?NAMES[i-1].ur:NAMES[i-1].en):"—";
+  pgNextT.textContent=i<panels.length-1?(ur?NAMES[i+1].ur:NAMES[i+1].en):"—";
+}
+function select(i,focus){
+  CUR=i;
+  allTabs.forEach(function(tb){
+    var on=idxOf(tb)===i;
+    tb.setAttribute("aria-current",String(on));
+    if(tb.hasAttribute("aria-selected"))tb.setAttribute("aria-selected",String(on));});
+  panels.forEach(function(p,k){p.classList.toggle("on",k===i);
+    if(k===i)p.removeAttribute("hidden");else p.setAttribute("hidden","")});
+  if(focus&&topTabs[i])topTabs[i].focus();
+  try{topTabs[i].scrollIntoView({block:"nearest",inline:"nearest",behavior:RM?"auto":"smooth"})}catch(e){}
+  observeIn(panels[i]); pager(i);
+  try{history.replaceState(null,"","#"+topTabs[i].getAttribute("aria-controls"))}catch(e){}
+}
+function stickyOffset(){
+  /* the tab bar is sticky; anything scrolled to must clear it */
+  var tw=document.querySelector(".tabwrap"),m=document.querySelector(".mast");
+  var o=tw?tw.getBoundingClientRect().height:0;
+  if(m&&getComputedStyle(m).position==="sticky")o+=m.getBoundingClientRect().height;
+  return o+14;
+}
+function goTo(i,scrollTop){
+  select(i,false);
+  if(!scrollTop)return;
+  try{
+    var tw=document.querySelector(".tabwrap");
+    var y=tw.getBoundingClientRect().top+window.scrollY-(stickyOffset()-tw.getBoundingClientRect().height)-6;
+    window.scrollTo({top:Math.max(0,y),behavior:RM?"auto":"smooth"});
+  }catch(e){}
+}
+allTabs.forEach(function(tb){
+  tb.addEventListener("click",function(){
+    goTo(idxOf(tb),true);});
+});
+topTabs.forEach(function(tb,i){
+  tb.addEventListener("keydown",function(e){var n=null;
+    if(e.key==="ArrowRight")n=(i+1)%topTabs.length;
+    else if(e.key==="ArrowLeft")n=(i-1+topTabs.length)%topTabs.length;
+    else if(e.key==="Home")n=0;else if(e.key==="End")n=topTabs.length-1;
+    if(n!==null){e.preventDefault();select(n,true);}});
+});
+if(pgPrev)pgPrev.addEventListener("click",function(){if(CUR>0)goTo(CUR-1,true)});
+if(pgNext)pgNext.addEventListener("click",function(){if(CUR<panels.length-1)goTo(CUR+1,true)});
+
+/* ---- CTA scroll ---- */
+var cta=document.querySelector(".cta");
+if(cta)cta.addEventListener("click",function(e){e.preventDefault();
+  try{document.querySelector(".tabwrap").scrollIntoView({behavior:RM?"auto":"smooth",block:"start"})}catch(x){}});
+
+/* ---- counters ---- */
+var cio=CAN?new IntersectionObserver(function(es){es.forEach(function(e){
+  if(!e.isIntersecting)return;cio.unobserve(e.target);
+  var el=e.target,to=parseFloat(el.dataset.to),dec=parseInt(el.dataset.dec,10),t0=null;
+  function step(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/1300,1),k=1-Math.pow(1-p,3);
+    el.textContent=(to*k).toFixed(dec);if(p<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);})},{threshold:.4}):null;
+[].slice.call(document.querySelectorAll("[data-to]")).forEach(function(el){
+  if(cio)cio.observe(el);else el.textContent=parseFloat(el.dataset.to).toFixed(parseInt(el.dataset.dec,10));});
+
+
+/* ---- lightbox ---- */
+var lb=document.getElementById("lb"),lbi=lb.querySelector("img"),lastF=null;
+[].slice.call(document.querySelectorAll(".fw")).forEach(function(fw){
+  fw.addEventListener("click",function(){var im=fw.querySelector("img");
+    lbi.src=im.src;lbi.alt=im.alt;lb.classList.add("on");lastF=document.activeElement;
+    lb.querySelector(".x").focus();document.body.style.overflow="hidden";});});
+function closeLb(){lb.classList.remove("on");document.body.style.overflow="";if(lastF)lastF.focus();}
+lb.addEventListener("click",closeLb);
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&lb.classList.contains("on"))closeLb();});
+
+/* ---- widget: seasonal flow ---- */
+var MON_EN=["December","January","February","March","April","May","June","July","August","September","October","November"];
+var MON_UR=["دسمبر","جنوری","فروری","مارچ","اپریل","مئی","جون","جولائی","اگست","ستمبر","اکتوبر","نومبر"];
+var LS=[40,34,32,45,110,290,640,880,720,300,120,62];
+var sea=document.getElementById("sea"),fv=document.getElementById("flowv"),
+    fb=document.getElementById("flowbar"),fn=document.getElementById("seaname"),fm=document.getElementById("flowmsg");
+function flow(){var i=+sea.value,v=LS[i],ur=root.getAttribute("data-lang")==="ur";
+  fv.textContent=v;fb.style.width=Math.max(3,(v/900)*100)+"%";
+  fn.textContent=(ur?MON_UR[i]:MON_EN[i]);
+  var m,c;
+  if(v<60){c="";m=ur?"<b>کمی۔</b> آبپاشی کی طلب صفر ہے، اس لیے سارا پانی ٹربائن سے گزارا جا سکتا ہے۔"
+    :"<b>Scarce.</b> Irrigation demand is nil, so all of it can go through the turbine.";}
+  else if(v<200){c="ok";m=ur?"<b>بڑھتا ہوا۔</b> بیک وقت آبپاشی اور بجلی، دونوں ممکن ہیں۔"
+    :"<b>Rising.</b> Enough to irrigate and generate at the same time.";}
+  else{c="ok";m=ur?"<b>وافر۔</b> منصوبے کی ضرورت سے کہیں زیادہ — اضافی پانی دریا میں چلا جاتا ہے۔"
+    :"<b>Abundant.</b> Far more than the scheme can use — the surplus passes down the river.";}
+  fm.className="verdictline "+c;fm.innerHTML=m;}
+sea.addEventListener("input",flow);
+
+/* ---- widget: flood stage ---- */
+var ST=[0,5,10,20,30,50,75,100],LOST=[0,33.0,42.5,65.7,87.1,97.8,103.3,117.6];
+var stage=document.getElementById("stage"),lv=document.getElementById("lostv"),
+    lbar=document.getElementById("lostbar"),slb=document.getElementById("stagelbl"),sm2=document.getElementById("stagemsg");
+function ipol(x){for(var i=1;i<ST.length;i++){if(x<=ST[i]){
+  var f=(x-ST[i-1])/(ST[i]-ST[i-1]);return LOST[i-1]+f*(LOST[i]-LOST[i-1]);}}return LOST[LOST.length-1];}
+function st(){var x=+stage.value,l=ipol(x),rem=170-l,ur=root.getAttribute("data-lang")==="ur";
+  lv.textContent=l.toFixed(1);lbar.style.width=(l/170*100)+"%";
+  slb.textContent=(ur?"دریا سے +"+x+" میٹر اوپر":"+"+x+" m above the river bed");
+  var m,c="";
+  if(x===0){c="ok";m=ur?"<b>کوئی سیلاب نہیں۔</b> پوری ۱۷۰ ہیکٹر بہترین زمین دستیاب ہے۔":"<b>No flood.</b> All 170 ha of the best land is available.";}
+  else if(x<20){c="ok";m=ur?"<b>"+rem.toFixed(0)+" ہیکٹر باقی۔</b> معمولی اضافہ دریا کے قریب نچلی زمین لے جاتا ہے۔":"<b>"+rem.toFixed(0)+" ha remain.</b> A moderate rise takes the low terraces along the river.";}
+  else if(x<=30){m=ur?"<b>"+rem.toFixed(0)+" ہیکٹر باقی۔</b> یہی حد اس مطالعے میں استعمال ہوئی ہے — اور یہ ایک اندازہ ہے، حساب نہیں۔":"<b>"+rem.toFixed(0)+" ha remain.</b> This is the threshold used throughout the study — and it is a judgement, not a computed design flood.";}
+  else if(x<=50){m=ur?"<b>"+rem.toFixed(0)+" ہیکٹر باقی۔</b> شدید سیلاب۔ ۶۲ میٹر بلند پاور ہاؤس محفوظ رہتا ہے؛ اس سے نیچے سب ختم۔":"<b>"+rem.toFixed(0)+" ha remain.</b> A severe outburst. The powerhouse at +62 m still stands; everything lower is gone.";}
+  else{c="bad";m=ur?"<b>صرف "+rem.toFixed(0)+" ہیکٹر باقی۔</b> اس سطح پر وادی کی تہہ میں منصوبہ قابلِ عمل نہیں رہتا۔":"<b>Only "+rem.toFixed(0)+" ha remain.</b> At this stage the scheme is not viable on the valley floor at all.";}
+  sm2.className="verdictline "+c;sm2.innerHTML=m;}
+stage.addEventListener("input",st);
+
+/* ---- widget: power ---- */
+var q=document.getElementById("q"),qv=document.getElementById("qv"),kw=document.getElementById("kw"),
+    kwb=document.getElementById("kwbar"),kwm=document.getElementById("kwmsg"),H=207;
+var chips=[].slice.call(document.querySelectorAll("#heads .chip"));
+chips.forEach(function(c){c.addEventListener("click",function(){
+  chips.forEach(function(x){x.setAttribute("aria-pressed",String(x===c))});H=+c.dataset.h;pw();});});
+function pw(){var Q=+q.value/1000,P=1000*9.81*Q*H*0.6/1000,ur=root.getAttribute("data-lang")==="ur";
+  qv.textContent=q.value+" l/s";kw.textContent=P.toFixed(1);
+  kwb.style.width=Math.min(100,P/60*100)+"%";
+  var m,c;
+  if(P<16.8){c="bad";m=ur?"<b>روشنی کے لیے بھی ناکافی۔</b> ۸۴ گھرانوں کو صرف بتیوں کے لیے ۱۶.۸ کلوواٹ چاہیے۔":"<b>Not enough for lighting.</b> 84 households need 16.8 kW for lights and charging alone.";}
+  else if(P<16){c="";m=ur?"<b>صرف روشنی۔</b> بتیوں اور موبائل چارجنگ کے لیے کافی، آلات کے لیے نہیں۔":"<b>Lights only.</b> Enough for lighting and phone charging, not for appliances.";}
+  else if(P<32){c="ok";m=ur?"<b>روشنی اور آلات۔</b> سال بھر آرام سے، مگر گرمائش کے لیے نہیں۔":"<b>Lights and appliances.</b> Comfortable year-round supply, though not enough for heating.";}
+  else{c="ok";m=ur?"<b>مکمل سہولت۔</b> کھانا پکانے اور گرمائش سمیت سب کچھ — سردیوں کے کم سے کم بہاؤ پر بھی۔":"<b>Full service.</b> Cooking and heating included — reached even at the estimated winter minimum.";}
+  kwm.className="verdictline "+c;kwm.innerHTML=m;}
+q.addEventListener("input",pw);
+/* ---- widget: command level ---- */
+var CLV=[3000,3010,3020,3030,3040,3050,3060,3070,3080,3090,3100,3110,3120,3130,3140,3150,3160,3170,3180,3190,3200,3210,3220];
+var C25=[176.8,183.5,190.4,196.8,201.2,204.8,206.6,208.4,209.9,210.5,211.0,211.4,212.0,212.6,212.9,213.2,213.7,214.1,214.4,214.4,214.5,214.6,214.7];
+var C15=[126.3,131.7,136.8,141.8,145.2,147.8,148.7,149.0,149.4,149.4,149.4,149.4,149.4,149.5,149.5,149.5,149.5,149.5,149.5,149.5,149.5,149.5,149.5];
+var lvl=document.getElementById("lvl"),lvv=document.getElementById("lvlv"),
+    lvb=document.getElementById("lvlbar"),lvl2=document.getElementById("lvllbl"),lvm=document.getElementById("lvlmsg");
+function cmd(){if(!lvl)return;var ur=root.getAttribute("data-lang")==="ur";
+  var i=Math.max(0,Math.min(CLV.length-1,Math.round((+lvl.value-3000)/10)));
+  var a=C25[i],b2=C15[i];
+  lvv.textContent=a.toFixed(1);lvb.style.width=(a/215*100)+"%";
+  lvl2.textContent=(ur?"\u0630\u062E\u06CC\u0631\u06C1 "+CLV[i]+" m":"forebay at "+CLV[i]+" m")+"  \u00B7  "+b2.toFixed(0)+" ha under 15\u00B0";
+  var m,c="";
+  if(CLV[i]<3040){c="bad";m=ur?"<b>\u0628\u06C1\u062A \u0646\u06CC\u0686\u06D2\u06D4</b> \u0646\u06C1\u0631 \u0628\u0644\u0646\u062F \u0632\u0645\u06CC\u0646 \u062A\u06A9 \u0646\u06C1\u06CC\u06BA \u067E\u06C1\u0646\u0686\u062A\u06CC\u06D4":"<b>Too low.</b> The canal misses the upper fan and leaves much of the good land dry.";}
+  else if(CLV[i]<3090){m=ur?"<b>\u0628\u06C1\u062A\u0631 \u06C1\u0648 \u0631\u06C1\u0627 \u06C1\u06D2\u06D4</b> \u06C1\u0631 10 \u0645\u06CC\u0679\u0631 \u0627\u0636\u0627\u0641\u06CC \u0628\u0644\u0646\u062F\u06CC \u0686\u0646\u062F \u06C1\u06CC\u06A9\u0679\u0631 \u0627\u0648\u0631 \u062F\u06CC\u062A\u06CC \u06C1\u06D2\u06D4":"<b>Improving.</b> Every extra 10 m of height buys a few more hectares.";}
+  else{c="ok";m=ur?"<b>\u062D\u062F \u0622 \u06AF\u0626\u06CC\u06D4</b> 3090 \u0645\u06CC\u0679\u0631 \u06A9\u06D2 \u0628\u0639\u062F \u0645\u0632\u06CC\u062F \u0628\u0644\u0646\u062F\u06CC \u0633\u06D2 \u0632\u0645\u06CC\u0646 \u0646\u06C1\u06CC\u06BA \u0628\u0691\u06BE\u062A\u06CC\u06D4":"<b>Saturated.</b> Past about 3090 m extra height buys no more land. That is the level this scheme uses.";}
+  lvm.className="verdictline "+c;lvm.innerHTML=m;}
+if(lvl)lvl.addEventListener("input",cmd);
+
+/* ---- widget: canal long-profile scrubber ---- */
+var PD=[0,8,16,24,35,43,51,63,74,85,93],
+    PG=[3103.3,3104.1,3105.1,3103.3,3102.3,3109.5,3106.1,3105.4,3103.2,3101.2,3098.7],
+    PI=[3103.28,3103.25,3103.23,3103.20,3103.17,3103.15,3103.12,3103.09,3103.05,3103.02,3103.00];
+var ch=document.getElementById("chain"),chv=document.getElementById("chainv"),
+    chl=document.getElementById("chainlbl"),chm=document.getElementById("chainmsg"),
+    chbar=document.getElementById("chainbar");
+function lin(A,B,x){for(var i=1;i<A.length;i++){if(x<=A[i]){
+  var f=(x-A[i-1])/(A[i]-A[i-1]);return B[i-1]+f*(B[i]-B[i-1]);}}return B[B.length-1];}
+function chain(){if(!ch)return;var ur=root.getAttribute("data-lang")==="ur";
+  var x=+ch.value,g=lin(PD,PG,x),w=lin(PD,PI,x),cf=g-w;
+  chv.textContent=(cf>=0?"+":"")+cf.toFixed(1);
+  chl.textContent=x+" m along  \u00B7  ground "+g.toFixed(1)+" m  \u00B7  water "+w.toFixed(1)+" m";
+  chbar.style.width=(x/93*100)+"%";
+  var m,c="";
+  if(cf>2.5){m=ur?"<b>\u06A9\u06BE\u062F\u0627\u0626\u06CC\u06D4</b> \u06CC\u06C1\u0627\u06BA \u0646\u06C1\u0631 \u06A9\u0648 "+cf.toFixed(1)+" m \u06A9\u0627\u0679\u0646\u0627 \u067E\u0691\u06D2 \u06AF\u06CC\u06D4":"<b>Cut.</b> The canal must be dug "+cf.toFixed(1)+" m into the hillside here.";}
+  else if(cf<-1.5){m=ur?"<b>\u0628\u06BE\u0631\u0627\u0624\u06D4</b> \u06CC\u06C1\u0627\u06BA "+Math.abs(cf).toFixed(1)+" m \u0628\u0646\u062F \u0628\u0627\u0646\u062F\u06BE\u0646\u0627 \u067E\u0691\u06D2 \u06AF\u0627\u06D4":"<b>Fill.</b> An embankment "+Math.abs(cf).toFixed(1)+" m high is needed here.";}
+  else{c="ok";m=ur?"<b>\u062A\u0642\u0631\u06CC\u0628\u0627\u064B \u0628\u0631\u0627\u0628\u0631\u06D4</b> \u0632\u0645\u06CC\u0646 \u062E\u0648\u062F \u06C1\u06CC \u062F\u0631\u0633\u062A \u0628\u0644\u0646\u062F\u06CC \u067E\u0631 \u06C1\u06D2\u06D4":"<b>Near grade.</b> The ground is already close to the right level \u2014 barely any earthwork.";}
+  chm.className="verdictline "+c;chm.innerHTML=m;}
+if(ch)ch.addEventListener("input",chain);
+
+/* ---- widget: carrying capacity ---- */
+var hp=document.getElementById("hp"),hpv=document.getElementById("hpv"),
+    hpl=document.getElementById("hplbl"),hpm=document.getElementById("hpmsg"),hpb=document.getElementById("hpbar");
+function cap(){if(!hp)return;var ur=root.getAttribute("data-lang")==="ur";
+  var pp=+hp.value/100,LAND=30.0,people=LAND/pp,hh=people/6;
+  hpv.textContent=Math.round(people);
+  hpl.textContent=pp.toFixed(2)+" ha per person  \u00B7  "+Math.round(hh)+(ur?" \u06AF\u06BE\u0631\u0627\u0646\u06D2":" households");
+  hpb.style.width=Math.min(100,people/400*100)+"%";
+  var m,c="";
+  if(pp<0.09){c="bad";m=ur?"<b>\u0628\u06C1\u062A \u06AF\u0646\u062C\u0627\u0646\u06D4</b> \u0627\u0633 \u0628\u0644\u0646\u062F\u06CC \u067E\u0631 \u0627\u06CC\u06A9 \u06C1\u06CC \u0645\u062E\u062A\u0635\u0631 \u0641\u0635\u0644 \u06C1\u0648\u062A\u06CC \u06C1\u06D2\u06D4":"<b>Too crowded.</b> At this altitude there is one short growing season; a household cannot feed itself on this little land.";}
+  else if(pp<=0.2){c="ok";m=ur?"<b>\u062D\u0642\u06CC\u0642\u062A \u06A9\u06D2 \u0642\u0631\u06CC\u0628\u06D4</b> \u06AF\u0644\u06AF\u062A \u0628\u0644\u062A\u0633\u062A\u0627\u0646 \u0645\u06CC\u06BA \u06AF\u0632\u0627\u0631\u06D2 \u06A9\u06CC \u06A9\u06BE\u06CC\u062A\u06CC \u0627\u0633\u06CC \u062D\u062F \u0645\u06CC\u06BA \u06C1\u0648\u062A\u06CC \u06C1\u06D2\u06D4":"<b>Realistic.</b> Subsistence farming in Gilgit-Baltistan sits in this range.";}
+  else{m=ur?"<b>\u06A9\u0634\u0627\u062F\u06C1\u06D4</b> \u0641\u06CC \u06AF\u06BE\u0631\u0627\u0646\u06C1 \u0632\u06CC\u0627\u062F\u06C1 \u0632\u0645\u06CC\u0646\u060C \u0645\u06AF\u0631 \u0622\u0628\u0627\u062F\u06CC \u06A9\u0645\u06D4":"<b>Generous.</b> More land per household, but fewer of them.";}
+  hpm.className="verdictline "+c;hpm.innerHTML=m;}
+if(hp)hp.addEventListener("input",cap);
+
+function paint(){if(!sea||!stage||!q)return;flow();st();pw();cmd();chain();cap();}
+
+/* ================= INITIALISE — every element and function now exists ============ */
+(function boot(){
+  try{
+    var hh=(location.hash||"").replace("#","");
+    var hi=-1;topTabs.forEach(function(x,k){if(x.getAttribute("aria-controls")===hh)hi=k;});
+    setLang(sl==="ur"?"ur":"en",false);
+    setMode(sm==="technical"?"technical":"general",false);
+    select(hi>=0?hi:0,false);
+    paint();
+  }catch(e){ if(window.console)console.error("init:",e); revealAll(); }
+})();
+
+/* ---- animated topographic ground ----------------------------------------
+   Mobile notes: innerWidth/innerHeight are unreliable on iOS while the address
+   bar animates, so clientWidth/clientHeight lead. The canvas is promoted to its
+   own layer, and on small screens the field is coarser and the frame rate is
+   halved — a phone does not need 60 fps of drifting contours. -------------- */
+var cv=document.getElementById("contours"),cx=cv.getContext("2d"),ph=0,raf=null,
+    SMALL=false,lastT=0,VW=0,VH=0;
+function vp(){
+  var d=document.documentElement;
+  VW=d.clientWidth||window.innerWidth||0;
+  VH=d.clientHeight||window.innerHeight||0;
+  SMALL=VW<820;
+  return VW>0&&VH>0;
+}
+function size(){
+  if(!vp())return false;
+  var dpr=Math.min(window.devicePixelRatio||1,SMALL?1.5:2);
+  cv.width=Math.round(VW*dpr);cv.height=Math.round(VH*dpr);
+  cv.style.width=VW+"px";cv.style.height=VH+"px";
+  cx.setTransform(dpr,0,0,dpr,0,0);
+  return true;
+}
+function fld(x,y,p){
+  return Math.sin(x*.0031+p*.9)*Math.cos(y*.0027-p*.55)
+       + 0.66*Math.sin((x*.85+y*.62)*.0034-p*1.15)
+       + 0.44*Math.cos((x*.55-y*.9)*.0046+p*.75)
+       + 0.28*Math.sin((x*1.3+y*.4)*.0067-p*1.6)
+       + 0.17*Math.cos((x*.3-y*1.2)*.0089+p*2.1);}
+function draw(){
+  if(!VW||!VH)return;
+  var w=VW,h=VH,S=SMALL?22:17,STEP=SMALL?0.20:0.155,
+      cols=Math.ceil(w/S)+1,rows=Math.ceil(h/S)+1,i,j2;
+  cx.clearRect(0,0,w,h);
+  var gr=getComputedStyle(root).getPropertyValue("--grid").trim();
+  if(gr){var gs=SMALL?86:110;
+    cx.strokeStyle=gr;cx.lineWidth=1;cx.beginPath();
+    for(var gx=0;gx<w;gx+=gs){cx.moveTo(gx+.5,0);cx.lineTo(gx+.5,h);}
+    for(var gy=0;gy<h;gy+=gs){cx.moveTo(0,gy+.5);cx.lineTo(w,gy+.5);}
+    cx.stroke();}
+  cx.strokeStyle=getComputedStyle(root).getPropertyValue("--contour").trim()||"rgba(255,255,255,.4)";
+  cx.lineWidth=SMALL?1.25:1.1;cx.lineCap="round";cx.lineJoin="round";
+  var G=new Float32Array(cols*rows);
+  for(j2=0;j2<rows;j2++)for(i=0;i<cols;i++)G[j2*cols+i]=fld(i*S,j2*S,ph);
+  function ip(a,b,lv){var t=(lv-a)/(b-a);return t<0?0:t>1?1:t;}
+  cx.beginPath();
+  for(var lv=-2.3;lv<=2.3;lv+=STEP){
+    for(j2=0;j2<rows-1;j2++)for(i=0;i<cols-1;i++){
+      var x0=i*S,y0=j2*S,a=G[j2*cols+i],b=G[j2*cols+i+1],c=G[(j2+1)*cols+i+1],d2=G[(j2+1)*cols+i],
+          k=(a>lv?8:0)|(b>lv?4:0)|(c>lv?2:0)|(d2>lv?1:0);
+      if(k===0||k===15)continue;
+      var T=[x0+ip(a,b,lv)*S,y0],R=[x0+S,y0+ip(b,c,lv)*S],
+          B=[x0+ip(d2,c,lv)*S,y0+S],L=[x0,y0+ip(a,d2,lv)*S],p1=null,p2=null;
+      switch(k){case 1:case 14:p1=L;p2=B;break;case 2:case 13:p1=B;p2=R;break;
+        case 3:case 12:p1=L;p2=R;break;case 4:case 11:p1=T;p2=R;break;
+        case 6:case 9:p1=T;p2=B;break;case 7:case 8:p1=L;p2=T;break;
+        case 5:p1=L;p2=T;cx.moveTo(B[0],B[1]);cx.lineTo(R[0],R[1]);break;
+        case 10:p1=L;p2=B;cx.moveTo(T[0],T[1]);cx.lineTo(R[0],R[1]);break;}
+      if(p1){cx.moveTo(p1[0],p1[1]);cx.lineTo(p2[0],p2[1]);}
+    }}
+  cx.stroke();}
+function loop(ts){
+  raf=requestAnimationFrame(loop);
+  var minDt=SMALL?45:16;                 /* ~22 fps on phones, ~60 on desktop */
+  if(ts&&ts-lastT<minDt)return;
+  lastT=ts||0; ph+=SMALL?0.0022:0.00075; draw();
+}
+function startCanvas(){
+  try{
+    if(!size()){cv.style.display="none";return;}
+    cv.style.display="";
+    draw();
+    if(!RM&&!raf)raf=requestAnimationFrame(loop);
+  }catch(e){cv.style.display="none";}
+}
+startCanvas();
+/* iOS fires several of these while the address bar collapses */
+var rz=null;
+function onResize(){clearTimeout(rz);rz=setTimeout(function(){if(size())draw();},120);}
+addEventListener("resize",onResize);
+addEventListener("orientationchange",function(){setTimeout(startCanvas,220);});
+if(window.visualViewport)window.visualViewport.addEventListener("resize",onResize);
+window.addEventListener("load",startCanvas);
+document.addEventListener("visibilitychange",function(){
+  if(document.hidden){if(raf)cancelAnimationFrame(raf);raf=null;}
+  else if(!RM&&!raf){lastT=0;raf=requestAnimationFrame(loop);}});
+})();
+</script>
+
+</body>
+</html>
